@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión de Negocios | PharmaSync')}"></head>
+<body class="bg-dark text-white">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <main class="main-content main-content-super">
+        <header th:replace="~{fragments/navbar-admin :: navbar('Gestión de Negocios Conectados')}"></header>
+
+        <div class="container-fluid py-4 mt-5">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 bg-light overflow-hidden">
+                        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold text-dark mb-0"><i class="fas fa-building me-2 text-primary"></i>Directorio de Empresas</h5>
+                            <span class="badge bg-primary rounded-pill px-3 py-2" th:text="${empresas.size()} + ' Registradas'">0 Registradas</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-white text-muted small fw-bold">
+                                        <tr>
+                                            <th class="ps-4">NOMBRE COMERCIAL</th>
+                                            <th>RUC</th>
+                                            <th>DEPARTAMENTO</th>
+                                            <th>ESTADO</th>
+                                            <th class="text-end pe-4">ACCIONES TÉCNICAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-dark">
+                                        <tr th:each="emp : ${empresas}">
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-primary text-white p-2 rounded-circle me-3 text-center" style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-store"></i>
+                                                    </div>
+                                                    <div class="fw-bold" th:text="${emp.nombreComercial}">Nombre</div>
+                                                </div>
+                                            </td>
+                                            <td th:text="${emp.ruc}">RUC</td>
+                                            <td th:text="${emp.departamento}">Región</td>
+                                            <td>
+                                                <span class="badge rounded-pill" th:classappend="${emp.activo} ? 'bg-success' : 'bg-danger'"
+                                                      th:text="${emp.activo} ? 'ACTIVO' : 'INACTIVO'">Estado</span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <form th:action="@{'/super-admin/empresas/toggle/' + ${emp.id}}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm" th:classappend="${emp.activo} ? 'btn-outline-danger' : 'btn-outline-success'">
+                                                        <i class="fas" th:classappend="${emp.activo} ? 'fa-power-off' : 'fa-check-circle'"></i>
+                                                        <span th:text="${emp.activo} ? 'Suspender' : 'Activar'">Cambiar</span>
+                                                    </button>
+                                                </form>
+                                                <a th:href="@{'/marketplace/empresa/' + ${emp.id}}" target="_blank" class="btn btn-sm btn-outline-primary ms-1">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

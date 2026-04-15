@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sistema de Gestión Farmacéutica')}">
+    <style>
+        .logo-pharma {
+            width: 50px;
+            height: 50px;
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Marquee Announcement -->
+    <div class="bg-primary text-white py-2 overflow-hidden position-relative" style="z-index: 1060;">
+        <div class="d-flex marquee-container">
+            <span class="marquee-text px-4"><i class="fas fa-bolt me-2"></i> ¡Conexión en tiempo real con SUNAT, RENIEC y DIGEMID!</span>
+            <span class="marquee-text px-4"><i class="fas fa-shield-alt me-2"></i> Seguridad de grado bancario para tus datos</span>
+            <span class="marquee-text px-4"><i class="fas fa-check-circle me-2"></i> Gestión Multi-Sede y Multi-Usuario Integrada</span>
+            <span class="marquee-text px-4"><i class="fas fa-university me-2"></i> Pagos con BCP, YAPE y PLIN</span>
+            <!-- Duplicate for infinite effect -->
+            <span class="marquee-text px-4"><i class="fas fa-bolt me-2"></i> ¡Conexión en tiempo real con SUNAT, RENIEC y DIGEMID!</span>
+            <span class="marquee-text px-4"><i class="fas fa-shield-alt me-2"></i> Seguridad de grado bancario para tus datos</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3 transition-all" id="mainNav">
+        <div class="container border-bottom pb-2">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                
+                   <img src="/images/logo.png" alt="Logo" width="50" height="50" class="logo-pharma">
+                
+                <div class="brand-text">
+                    <span class="fw-bold text-dark h4 mb-0 d-block"><span style="color: #007bff;">Pharma</span><span style="color: #a4ec2f;">Sync</span></span>
+                    <span class="text-primary fw-light x-small text-uppercase ls-2">Marketplace de Salud</span>
+                </div>
+            </a>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars text-primary"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark px-3 hover-primary transition-all" href="#servicios">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark px-3 hover-primary transition-all" href="#sobre-nosotros">Sobre Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark px-3 hover-primary transition-all" href="#contacto">Contacto</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a th:href="@{/login}" class="btn btn-light rounded-pill px-4 fw-bold text-primary shadow-xs">Ingresar</a>
+                    </li>
+                    <li class="nav-item">
+                         <a th:href="@{/registro}" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Registrar</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Marketplace Hero Section -->
+    <header class="hero-header overflow-hidden position-relative py-5 d-flex align-items-center" 
+            style="min-height: 80vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/pharmadashboard.jpg'); background-size: cover; background-position: center;">
+        <div class="container py-lg-5 text-center text-white">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 h-reveal">
+                    <div class="badge bg-white text-primary rounded-pill px-3 py-2 mb-4 fw-bold ls-1 shadow-sm">
+                        <i class="fas fa-check-circle me-2"></i> MÁS DE 500 FARMACIAS CONECTADAS EN TODO EL PERÚ
+                    </div>
+                    <h1 class="display-3 fw-900 mb-4 lh-sm">Tu Salud a un Solo Clic</h1>
+                    <p class="lead mb-5 px-lg-5 opacity-90">Busca medicamentos, compara precios y compra en las mejores farmacias y droguerías del país con entrega a domicilio segura.</p>
+                    
+                    <!-- Marketplace Global Search -->
+                    <div class="search-main mx-auto position-relative mb-5" style="max-width: 700px;">
+                        <form th:action="@{/marketplace}" method="get">
+                            <input type="text" name="q" class="form-control form-control-lg rounded-pill ps-5 py-4 border-0 shadow-2xl" 
+                                   placeholder="¿Qué medicamento o producto buscas hoy?">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 py-3 position-absolute end-0 top-50 translate-middle-y me-2 fw-bold shadow-lg">
+                                <i class="fas fa-search me-2"></i> Buscar Ahora
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-center gap-4 mt-5">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-shipping-fast fs-4 text-warning"></i>
+                            <span class="fw-bold small text-uppercase">Envío Rápido</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-shield-alt fs-4 text-warning"></i>
+                            <span class="fw-bold small text-uppercase">Pago Seguro</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-award fs-4 text-warning"></i>
+                            <span class="fw-bold small text-uppercase">Calidad DIGEMID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Partners / Trust Bar -->
+    <section class="integraciones-bar bg-white border-top border-bottom py-4" id="integraciones">
+        <div class="container text-center">
+            <h6 class="text-uppercase text-muted x-small ls-2 mb-4">CONECTADOS CON LAS MEJORES PLATAFORMAS</h6>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 align-items-center opacity-60 grayscale hover-color transition-all">
+                <div class="col d-flex flex-column align-items-center gap-2">
+                    <i class="fas fa-file-invoice-dollar fs-2 text-primary"></i>
+                    <span class="fw-bold small">SUNAT</span>
+                </div>
+                <div class="col d-flex flex-column align-items-center gap-2">
+                    <i class="fas fa-id-card fs-2 text-primary"></i>
+                    <span class="fw-bold small">RENIEC</span>
+                </div>
+                <div class="col d-flex flex-column align-items-center gap-2">
+                    <i class="fas fa-file-medical fs-2 text-primary"></i>
+                    <span class="fw-bold small">DIGEMID</span>
+                </div>
+                <div class="col d-flex flex-column align-items-center gap-2">
+                    <i class="fas fa-university fs-2 text-primary"></i>
+                    <span class="fw-bold small">BANCOS PERÚ</span>
+                </div>
+                <div class="col d-flex flex-column align-items-center gap-2">
+                    <i class="fas fa-mobile-alt fs-2 text-primary"></i>
+                    <span class="fw-bold small">YAPE / PLIN</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services / Features Grid -->
+    <section class="py-5 bg-light" id="servicios">
+        <div class="container py-5">
+            <div class="text-center mb-5 h-reveal">
+                <h2 class="display-5 fw-900 mb-3">La Plataforma Más Completa</h2>
+                <p class="lead text-muted mx-auto" style="max-width: 600px;">Todo lo que necesitas para gestionar tu farmacia desde un solo lugar con herramientas de última generación.</p>
+            </div>
+            <div class="row g-4">
+                <!-- POS -->
+                <div class="col-md-4 h-reveal" style="animation-delay: 0.1s">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift bg-white">
+                        <div class="icon-circle bg-primary-subtle text-primary mb-4 p-3 rounded-4 d-inline-block shadow-xs">
+                            <i class="fas fa-desktop fs-4"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">POS Moderno</h4>
+                        <p class="text-muted">Buscador instantáneo por nombre o código de barras. Soporta boletas y facturas electrónicas.</p>
+                    </div>
+                </div>
+                <!-- Inventory -->
+                <div class="col-md-4 h-reveal" style="animation-delay: 0.2s">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift bg-white">
+                        <div class="icon-circle bg-success-subtle text-success mb-4 p-3 rounded-4 d-inline-block shadow-xs">
+                            <i class="fas fa-sync fs-4"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Stock Inteligente</h4>
+                        <p class="text-muted">Gestión de lotes y vencimientos automáticos. Nunca te quedes sin stock con nuestras alertas.</p>
+                    </div>
+                </div>
+                <!-- Reports -->
+                <div class="col-md-4 h-reveal" style="animation-delay: 0.3s">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 hover-lift bg-white">
+                        <div class="icon-circle bg-info-subtle text-info mb-4 p-3 rounded-4 d-inline-block shadow-xs">
+                            <i class="fas fa-chart-pie fs-4"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Reportes Pro</h4>
+                        <p class="text-muted">Visualiza tus ganancias y productos más vendidos con gráficos dinámicos y reportes descargables.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-5 bg-white overflow-hidden">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-5 order-2 order-lg-1 h-reveal">
+                    <h2 class="display-6 fw-900 mb-4 lh-sm">Ubicados en el Corazón de <span class="text-primary">Perú</span></h2>
+                    <p class="text-muted mb-4">PharmaSync ofrece cobertura y soporte a nivel nacional. Nuestra sede central en Lima atiende a cientos de farmacias en los 24 departamentos.</p>
+                    <div class="d-flex flex-column gap-3 mb-5">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary-subtle p-2 rounded-3 text-primary"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Dirección Principal</h6>
+                                <p class="small text-muted mb-0">Av. Javier Prado Este, San Isidro, Lima, Perú</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-primary-subtle p-2 rounded-3 text-primary"><i class="fas fa-phone"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Atención Directa</h6>
+                                <p class="small text-muted mb-0">+51 01 234 5678</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#contacto" class="btn btn-outline-primary rounded-pill px-4 fw-bold">Contactar con Ventas</a>
+                </div>
+                <div class="col-lg-7 order-1 order-lg-2 h-reveal" style="animation-delay: 0.2s">
+                    <div id="peruMap" class="rounded-4 shadow-xl border overflow-hidden" style="height: 450px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5 bg-dark overflow-hidden position-relative">
+        <div class="container py-5 position-relative z-2">
+            <h2 class="text-center display-6 fw-bold mb-5 text-white">Lo que Dicen Nuestros Clientes</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="glass-card p-4 rounded-4 h-100 bg-white">
+                        <div class="text-warning mb-3"><i class="fas fa-star" th:each="i : ${#numbers.sequence(1,5)}"></i></div>
+                        <p class="fst-italic text-dark mb-4">"El sistema es increíblemente rápido. Las ventas se registran en segundos y la integración con SUNAT es impecable."</p>
+                        <div class="d-flex align-items-center text-dark">
+                            <img src="https://ui-avatars.com/api/?name=Ricardo+Perez&background=random" class="rounded-circle me-3" width="40">
+                            <div>
+                                <h6 class="fw-bold mb-0 small">Droguería Lima Sur</h6>
+                                <span class="x-small text-muted">Lima, Perú</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card p-4 rounded-4 h-100 bg-white">
+                        <div class="text-warning mb-3"><i class="fas fa-star" th:each="i : ${#numbers.sequence(1,5)}"></i></div>
+                        <p class="fst-italic text-dark mb-4">"Gestionar mi stock ahora es automático. Las alertas me salvan de perder ventas por productos faltantes."</p>
+                        <div class="d-flex align-items-center text-dark">
+                            <img src="https://ui-avatars.com/api/?name=Ana+Torres&background=random" class="rounded-circle me-3" width="40">
+                            <div>
+                                <h6 class="fw-bold mb-0 small">Farmacia La Central</h6>
+                                <span class="x-small text-muted">Arequipa, Perú</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card p-4 rounded-4 h-100 bg-white">
+                        <div class="text-warning mb-3"><i class="fas fa-star" th:each="i : ${#numbers.sequence(1,5)}"></i></div>
+                        <p class="fst-italic text-dark mb-4">"Recomiendo Londres a cualquier colega que busque seguridad y control total en un sistema multi-tenant."</p>
+                        <div class="d-flex align-items-center text-dark">
+                            <img src="https://ui-avatars.com/api/?name=Juan+Ramos&background=random" class="rounded-circle me-3" width="40">
+                            <div>
+                                <h6 class="fw-bold mb-0 small">Botica El Alivio</h6>
+                                <span class="x-small text-muted">Cusco, Perú</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-10"></div>
+    </section>
+
+    <div th:replace="~{fragments/footer-public :: footer}"></div>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, .fw-900 { font-family: 'Readex Pro', sans-serif; font-weight: 800; }
+        
+        .text-gradient { background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .ls-1 { letter-spacing: 1px; }
+        .ls-2 { letter-spacing: 2px; }
+        .x-small { font-size: 0.75rem; }
+        .shadow-xs { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+
+        /* Marquee Animation */
+        .marquee-container { animation: marquee 30s linear infinite; white-space: nowrap; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .marquee-text { font-family: 'Readex Pro', sans-serif; font-size: 0.9rem; font-weight: 500; min-width: max-content; }
+
+        /* Hero Accents */
+        .glass-orb { position: absolute; border-radius: 50%; filter: blur(50px); opacity: 0.4; }
+        .orb-1 { width: 300px; height: 300px; background: #4361ee; top: -50px; left: -50px; }
+        .orb-2 { width: 400px; height: 400px; background: #4cc9f0; bottom: -100px; right: -50px; }
+        
+        .floating-card { position: absolute; z-index: 5; background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .pos-1 { top: 10%; right: -5%; }
+        .pos-2 { bottom: 15%; left: -5%; }
+        
+        /* Animations */
+        .anime-float { animation: float 6s ease-in-out infinite; }
+        .anime-float-delay { animation: float 6s ease-in-out 3s infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        
+        .h-reveal { opacity: 0; transform: translateY(30px); animation: reveal 0.8s forwards ease-out; }
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+        .hover-up:hover { transform: translateY(-5px); }
+        .scale-hover { transition: transform 0.3s; }
+        .btn:hover .scale-hover { transform: translateX(5px); }
+        
+        .overlap { margin-left: -12px; transition: 0.3s; }
+        .overlap:hover { margin-left: -5px; z-index: 10; cursor: pointer; }
+
+        .glass-card { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .hover-lift { transition: 0.3s; }
+        .hover-lift:hover { transform: translateY(-10px); background: #fff !important; box-shadow: 0 20px 40px rgba(0,0,0,0.06) !important; }
+        
+        .grayscale { filter: grayscale(1); opacity: 0.5; transition: 0.4s; }
+        .hover-color:hover .col { filter: grayscale(0); opacity: 1; }
+
+        .hover-link:hover { color: var(--primary) !important; }
+        .hover-primary:hover { color: var(--primary) !important; }
+
+        #peruMap { background: #eef2ff; }
+    </style>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar transparency
+            const nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('py-2', 'shadow-md');
+                    nav.classList.remove('py-3', 'shadow-sm');
+                } else {
+                    nav.classList.add('py-3', 'shadow-sm');
+                    nav.classList.remove('py-2', 'shadow-md');
+                }
+            });
+
+            // Leaflet Map Initialization
+            if (document.getElementById('peruMap')) {
+                const map = L.map('peruMap').setView([-12.046374, -77.042793], 13); // Center on Lima
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                const icon = L.divIcon({
+                    html: '<div style="background: #4361ee; width: 25px; height: 25px; border-radius: 50%; border: 4px solid white; box-shadow: 0 0 15px rgba(67,97,238,0.5)"></div>',
+                    className: 'custom-map-marker',
+                    iconSize: [25, 25],
+                    iconAnchor: [12, 12]
+                });
+
+                L.marker([-12.046374, -77.042793], { icon: icon })
+                    .addTo(map)
+                    .bindPopup('<div class="p-2 fw-bold text-primary">Droguería Londres Ltd.</div><div class="px-2 small text-muted">Sede Central - Soporte Nacional</div>')
+                    .openPopup();
+            }
+
+            // Smooth Scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

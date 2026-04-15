@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Iniciar Sesión | PharmaSync')}"></head>
+<body class="auth-body">
+
+    <!-- Ambient Background Orbs -->
+    <div class="auth-orb orb-tl"></div>
+    <div class="auth-orb orb-br"></div>
+    <div class="auth-grid-overlay"></div>
+
+    <div class="auth-page-wrapper">
+
+        <!-- ===== CARD ===== -->
+        <div class="auth-card shadow-soft">
+            <div class="row g-0 h-100">
+
+                <!-- ── LEFT BRANDING PANEL ── -->
+                <div class="col-lg-5 d-none d-lg-flex auth-sidebar flex-column justify-content-between p-5">
+                    <div>
+                        <!-- Logo -->
+                        <div class="brand-box mb-5">
+                            <div class="brand-pill">
+                                <i class="fas fa-prescription-bottle-alt"></i>
+                            </div>
+                            <span class="brand-name ms-3">PharmaSync</span>
+                        </div>
+
+                        <h2 class="sidebar-title">Todo bajo<br><span class="sidebar-accent">Control Real</span></h2>
+                        <p class="sidebar-sub mt-3 mb-5">La plataforma líder en gestión farmacéutica para boticas y droguerías en todo el Perú.</p>
+
+                        <!-- Feature list -->
+                        <ul class="auth-feature-list">
+                            <li>
+                                <span class="feat-icon"><i class="fas fa-shield-halved"></i></span>
+                                <span>Seguridad Multi-Tenant</span>
+                            </li>
+                            <li>
+                                <span class="feat-icon"><i class="fas fa-chart-line"></i></span>
+                                <span>Reportes en Tiempo Real</span>
+                            </li>
+                            <li>
+                                <span class="feat-icon"><i class="fas fa-cloud-arrow-up"></i></span>
+                                <span>Respaldo Automático</span>
+                            </li>
+                            <li>
+                                <span class="feat-icon"><i class="fas fa-store"></i></span>
+                                <span>Marketplace Integrado</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-footer-text">© 2026 PharmaSync Cloud · v4.0</div>
+                </div>
+
+                <!-- ── RIGHT FORM PANEL ── -->
+                <div class="col-lg-7 col-12 auth-form-panel d-flex flex-column justify-content-center p-4 p-md-5">
+
+                    <!-- Mobile logo -->
+                    <div class="d-flex d-lg-none align-items-center mb-4">
+                        <div class="brand-pill brand-pill-sm me-2"><i class="fas fa-prescription-bottle-alt"></i></div>
+                        <span class="fw-bold fs-5 text-dark">PharmaSync</span>
+                    </div>
+
+                    <div class="form-header mb-4">
+                        <h3 class="form-title">Bienvenido de Nuevo</h3>
+                        <p class="form-subtitle">Selecciona tu rol e ingresa tus credenciales</p>
+                    </div>
+
+                    <!-- ── ROLE TABS ── -->
+                    <div class="role-tabs mb-4" id="roleTabs">
+                        <button type="button" class="role-tab active" data-role="admin" data-color="purple"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-crown"></i></span>
+                            <span class="role-tab-label">Admin</span>
+                        </button>
+                        <button type="button" class="role-tab" data-role="negocio" data-color="blue"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-store-alt"></i></span>
+                            <span class="role-tab-label">Negocio</span>
+                        </button>
+                        <button type="button" class="role-tab" data-role="cliente" data-color="teal"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-user"></i></span>
+                            <span class="role-tab-label">Cliente</span>
+                        </button>
+                    </div>
+
+                    <!-- Role hint bar -->
+                    <div class="role-hint-bar mb-4" id="roleHintBar">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="roleHintText">Acceso para Super Administradores y Administradores de sistema.</span>
+                    </div>
+
+                    <!-- ── ALERTS ── -->
+                    <div th:if="${param.error == 'suspension'}"
+                         class="auth-alert auth-alert-warning mb-3">
+                        <i class="fas fa-lock me-2"></i>
+                        Tu Negocio ha sido suspendido. Contacte con el administrador.
+                    </div>
+                    <div th:if="${param.error == 'rol'}"
+                         class="auth-alert auth-alert-danger mb-3">
+                        <i class="fas fa-shield-exclamation me-2"></i>
+                        <strong>Acceso denegado:</strong> Credenciales incorrectas o rol no válido para este perfil.
+                    </div>
+                    <div th:if="${param.error != null and param.error != 'suspension' and param.error != 'rol'}"
+                         class="auth-alert auth-alert-danger mb-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Usuario o contraseña incorrectos. Intenta de nuevo.
+                    </div>
+                    <div th:if="${param.logout}"
+                         class="auth-alert auth-alert-info mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Sesión cerrada exitosamente.
+                    </div>
+                    <div th:if="${success}"
+                         class="auth-alert auth-alert-success mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                    </div>
+
+                    <!-- ── LOGIN FORM ── -->
+                    <form th:action="@{/login}" method="post" class="auth-form" id="loginForm">
+
+                        <!-- Hidden role field -->
+                        <input type="hidden" name="selectedRole" id="selectedRole" value="admin">
+
+                        <div class="field-group mb-3">
+                            <label for="username" class="field-label">Usuario / Correo</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><i class="fas fa-user"></i></span>
+                                <input type="text" class="field-input" id="username" name="username"
+                                       placeholder="Tu identificador de acceso" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="field-group mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="password" class="field-label mb-0">Contraseña</label>
+                                <a href="#" class="forgot-link">¿Olvidé mi clave?</a>
+                            </div>
+                            <div class="input-wrap">
+                                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="field-input" id="password" name="password"
+                                       placeholder="••••••••" required>
+                                <button type="button" class="toggle-pass" id="togglePassword">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <label class="check-wrap">
+                                <input type="checkbox" name="remember-me" id="remember-me">
+                                <span class="check-box"></span>
+                                <span class="check-label">Recordarme</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-auth-submit" id="submitBtn">
+                            <span class="btn-text">Acceder al Sistema</span>
+                            <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                        </button>
+                    </form>
+
+                    <!-- Social Auth -->
+                    <div class="social-auth-box mt-4">
+                        <div class="separator-line">
+                            <span>O ingresar con</span>
+                        </div>
+                        <div class="d-flex gap-3 justify-content-center mt-3">
+                            <button type="button" class="btn-social btn-google" title="Ingresar con Google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                            <button type="button" class="btn-social btn-facebook" title="Ingresar con Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                            <button type="button" class="btn-social btn-apple" title="Ingresar con Apple">
+                                <i class="fab fa-apple"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer link -->
+                    <div class="auth-footer-links mt-4">
+                        <div class="separator-line">
+                            <span>¿No tienes cuenta?</span>
+                        </div>
+                        <div class="d-flex gap-2 mt-3 flex-wrap justify-content-center">
+                            <a th:href="@{/registro}" class="auth-footer-btn">
+                                <i class="fas fa-store me-1"></i> Registrar Farmacia
+                            </a>
+                            <a th:href="@{/registro(role='cliente')}" class="auth-footer-btn">
+                                <i class="fas fa-user-plus me-1"></i> Crear Cuenta Cliente
+                            </a>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/" class="back-home-link">
+                                <i class="fas fa-arrow-left me-1"></i> Volver al inicio
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ── AUTH BODY ── */
+        :root {
+            --primary: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-soft: #E3F2FD;
+            --teal: #0d9488;
+            --teal-dark: #0f766e;
+            --purple: #7c3aed;
+            --purple-dark: #5b21b6;
+            --role-color: #1976D2;
+            --role-color-rgb: 25, 118, 210;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body.auth-body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(25, 118, 210, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(25, 118, 210, 0.05) 0%, transparent 25%),
+                linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><path fill="%231976D2" fill-opacity="0.03" d="M40,100 Q60,60 100,40 Q140,60 160,100 Q140,140 100,160 Q60,140 40,100 M100,40 L100,160 M40,100 L160,100"/></svg>');
+            background-size: 300px;
+            animation: subtleMove 25s infinite linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes subtleMove {
+            0% {
+                background-position: 0 0, 0 0, 0 0;
+            }
+
+            100% {
+                background-position: 300px 300px, -300px -300px, 150px 150px;
+            }
+        }
+
+        /* Grid overlay subtle */
+        .auth-grid-overlay {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Ambient orbs */
+        .auth-orb {
+            position: fixed; border-radius: 50%;
+            filter: blur(90px); pointer-events: none; z-index: 0;
+        }
+        .orb-tl {
+            width: 500px; height: 500px;
+            background: rgba(67, 97, 238, 0.25);
+            top: -150px; left: -150px;
+        }
+        .orb-br {
+            width: 450px; height: 450px;
+            background: rgba(124, 58, 237, 0.2);
+            bottom: -120px; right: -120px;
+        }
+
+        /* Page wrapper */
+        .auth-page-wrapper {
+            position: relative; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; width: 100%; padding: 1.5rem;
+        }
+
+        /* ── CARD ── */
+        .auth-card {
+            width: 100%; max-width: 980px;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 40px 90px -20px rgba(25,118,210,0.25), 0 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        /* ── SIDEBAR ── */
+        .auth-sidebar {
+            background: linear-gradient(150deg, #1976D2 0%, #1565C0 60%, #0D47A1 100%);
+            position: relative; overflow: hidden; min-height: 600px;
+        }
+        .auth-sidebar::before {
+            content: '';
+            position: absolute; width: 350px; height: 350px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -80px; right: -100px;
+        }
+        .auth-sidebar::after {
+            content: '';
+            position: absolute; width: 250px; height: 250px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50%;
+            bottom: -60px; left: -60px;
+        }
+
+        .brand-box { display: flex; align-items: center; position: relative; z-index: 2; }
+        .brand-pill {
+            width: 48px; height: 48px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #fff;
+            backdrop-filter: blur(10px);
+        }
+        .brand-pill-sm { width: 36px; height: 36px; border-radius: 10px; font-size: 0.9rem; }
+        .brand-name { font-family: 'Readex Pro', sans-serif; font-weight: 700; color: #fff; font-size: 1.25rem; }
+
+        .sidebar-title {
+            font-family: 'Readex Pro', sans-serif;
+            font-weight: 800; font-size: 2rem;
+            color: #fff; line-height: 1.25;
+            position: relative; z-index: 2;
+        }
+        .sidebar-accent { color: rgba(255,255,255,0.5); }
+        .sidebar-sub { color: rgba(255,255,255,0.65); font-size: 0.875rem; line-height: 1.6; position: relative; z-index: 2; }
+
+        .auth-feature-list {
+            list-style: none; display: flex; flex-direction: column; gap: 1rem;
+            position: relative; z-index: 2;
+        }
+        .auth-feature-list li {
+            display: flex; align-items: center; gap: 0.875rem;
+            color: rgba(255,255,255,0.85); font-size: 0.875rem;
+        }
+        .feat-icon {
+            width: 34px; height: 34px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer-text { color: rgba(255,255,255,0.35); font-size: 0.7rem; position: relative; z-index: 2; }
+
+        /* ── FORM PANEL ── */
+        .auth-form-panel { background: #fff; }
+
+        .form-title {
+            font-family: 'Readex Pro', sans-serif;
+            font-weight: 800; font-size: 1.65rem; color: #0f172a;
+        }
+        .form-subtitle { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; }
+
+        /* ── ROLE TABS ── */
+        .role-tabs {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+            background: #f1f5f9; padding: 0.375rem; border-radius: 1rem;
+        }
+        .role-tab {
+            display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+            padding: 0.65rem 0.5rem;
+            background: transparent; border: none; border-radius: 0.75rem;
+            cursor: pointer; transition: all 0.25s ease;
+            color: #64748b;
+        }
+        .role-tab-icon { font-size: 1rem; transition: 0.25s; }
+        .role-tab-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em; }
+
+        .role-tab.active {
+            background: #fff;
+            color: var(--role-color);
+            box-shadow: 0 2px 12px rgba(var(--role-color-rgb), 0.2);
+        }
+        .role-tab:not(.active):hover {
+            background: rgba(255,255,255,0.6);
+            color: #334155;
+        }
+
+        /* ── ROLE HINT ── */
+        .role-hint-bar {
+            padding: 0.625rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.78rem;
+            background: rgba(var(--role-color-rgb), 0.08);
+            color: rgba(var(--role-color-rgb), 1);
+            border: 1px solid rgba(var(--role-color-rgb), 0.15);
+            display: flex; align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        /* ── ALERTS ── */
+        .auth-alert {
+            padding: 0.75rem 1rem;
+            border-radius: 0.875rem;
+            font-size: 0.82rem;
+            display: flex; align-items: center;
+        }
+        .auth-alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .auth-alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+        .auth-alert-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .auth-alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+
+        /* ── FIELDS ── */
+        .field-label {
+            display: block; font-size: 0.72rem; font-weight: 700;
+            color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 0.45rem;
+        }
+        .input-wrap {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+            color: #94a3b8; font-size: 0.875rem; pointer-events: none;
+        }
+        .field-input {
+            width: 100%; padding: 0.8rem 1rem 0.8rem 2.75rem;
+            background: #f8fafc; border: 2px solid transparent;
+            border-radius: 0.875rem; font-size: 0.9rem; color: #0f172a;
+            outline: none; transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .field-input:focus {
+            background: #fff;
+            border-color: var(--role-color);
+            box-shadow: 0 0 0 4px rgba(var(--role-color-rgb), 0.1);
+        }
+        .field-input::placeholder { color: #cbd5e1; }
+
+        .toggle-pass {
+            position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+            background: transparent; border: none; cursor: pointer;
+            color: #94a3b8; padding: 0.25rem; transition: color 0.2s;
+        }
+        .toggle-pass:hover { color: #475569; }
+
+        .forgot-link {
+            font-size: 0.75rem; font-weight: 600; color: var(--role-color);
+            text-decoration: none; opacity: 0.8;
+        }
+        .forgot-link:hover { opacity: 1; }
+
+        /* Custom checkbox */
+        .check-wrap {
+            display: flex; align-items: center; gap: 0.5rem;
+            cursor: pointer; user-select: none;
+        }
+        .check-wrap input[type="checkbox"] { display: none; }
+        .check-box {
+            width: 18px; height: 18px;
+            border: 2px solid #cbd5e1; border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        /* ── SOCIAL AUTH AND SEPARATOR ── */
+        .social-auth-box { width: 100%; text-align: center; }
+        .separator-line {
+            display: flex; align-items: center; text-align: center; color: #94a3b8; font-size: 0.8rem;
+        }
+        .separator-line::before, .separator-line::after {
+            content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; margin: 0 10px;
+        }
+        .btn-social {
+            width: 45px; height: 45px;
+            border-radius: 50%; border: 1px solid #e2e8f0;
+            background: #fff; color: #475569;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-social:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .btn-google:hover { color: #DB4437; border-color: #DB4437; }
+        .btn-facebook:hover { color: #4267B2; border-color: #4267B2; }
+        .btn-apple:hover { color: #000; border-color: #000; }
+        .check-wrap input:checked + .check-box {
+            background: var(--role-color);
+            border-color: var(--role-color);
+        }
+        .check-wrap input:checked + .check-box::after {
+            content: '✓'; color: #fff; font-size: 11px; font-weight: 700;
+        }
+        .check-label { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-auth-submit {
+            width: 100%; padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, var(--role-color), color-mix(in srgb, var(--role-color) 70%, #000 30%));
+            color: #fff; border: none; border-radius: 2rem;
+            font-size: 0.95rem; font-weight: 700; font-family: 'Inter', sans-serif;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px -10px rgba(var(--role-color-rgb), 0.5);
+        }
+        .btn-auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -10px rgba(var(--role-color-rgb), 0.6);
+        }
+        .btn-auth-submit:active { transform: translateY(0); }
+        .btn-icon { transition: transform 0.3s; }
+        .btn-auth-submit:hover .btn-icon { transform: translateX(4px); }
+
+        /* ── FOOTER LINKS ── */
+        .separator-line {
+            display: flex; align-items: center; gap: 0.75rem;
+            color: #94a3b8; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .separator-line::before, .separator-line::after {
+            content: ''; flex: 1; height: 1px; background: #e2e8f0;
+        }
+        .auth-footer-btn {
+            padding: 0.5rem 1rem; border: 1.5px solid #e2e8f0;
+            border-radius: 2rem; font-size: 0.78rem; font-weight: 600;
+            color: #475569; text-decoration: none; transition: all 0.2s;
+        }
+        .auth-footer-btn:hover {
+            border-color: var(--role-color);
+            color: var(--role-color);
+            background: rgba(var(--role-color-rgb), 0.05);
+        }
+        .back-home-link {
+            font-size: 0.78rem; color: #94a3b8; text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-home-link:hover { color: #475569; }
+
+        /* Role-specific color themes */
+        .role-admin  { --role-color: #7c3aed; --role-color-rgb: 124, 58, 237; }
+        .role-negocio { --role-color: #4361ee; --role-color-rgb: 67, 97, 238; }
+        .role-cliente { --role-color: #0d9488; --role-color-rgb: 13, 148, 136; }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .auth-page-wrapper { padding: 1rem; align-items: flex-start; }
+            .auth-card { border-radius: 1.25rem; }
+            .auth-form-panel { padding: 1.5rem !important; }
+            body.auth-body { align-items: flex-start; overflow-y: auto; }
+        }
+    </style>
+
+    <script th:inline="javascript">
+        // Role configuration
+        const roleConfig = {
+            admin: {
+                color: '#1976D2', rgb: '25, 118, 210',
+                hint: 'Acceso para Super Administradores y Administradores del sistema.'
+            },
+            negocio: {
+                color: '#1565C0', rgb: '21, 101, 192',
+                hint: 'Acceso para propietarios y gestores de Farmacias / Boticas.'
+            },
+            cliente: {
+                color: '#0D47A1', rgb: '13, 71, 161',
+                hint: 'Acceso para clientes del marketplace. Gestiona tus pedidos.'
+            }
+        };
+
+        function selectRole(tab) {
+            // Remove active from all
+            document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const role = tab.dataset.role;
+            document.getElementById('selectedRole').value = role;
+
+            // Update CSS variables on the form panel
+            const cfg = roleConfig[role];
+            const panel = document.querySelector('.auth-form-panel');
+            panel.style.setProperty('--role-color', cfg.color);
+            panel.style.setProperty('--role-color-rgb', cfg.rgb);
+
+            // Update hint
+            document.getElementById('roleHintText').textContent = cfg.hint;
+
+            // Animate hint bar
+            const hintBar = document.getElementById('roleHintBar');
+            hintBar.style.opacity = '0';
+            setTimeout(() => { hintBar.style.opacity = '1'; }, 150);
+        }
+
+        // Toggle password
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const pw = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            pw.type = pw.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // Restore selected role from URL if error
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const savedRole = urlParams.get('role') || sessionStorage.getItem('lastRole') || 'admin';
+            const tab = document.querySelector(`.role-tab[data-role="${savedRole}"]`);
+            if (tab) selectRole(tab);
+        })();
+
+        // Save role to session before submit
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const role = document.getElementById('selectedRole').value;
+            sessionStorage.setItem('lastRole', role);
+        });
+    </script>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

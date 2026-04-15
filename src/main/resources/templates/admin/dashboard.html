@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Dashboard Administrador')}"></head>
+<body class="bg-light">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+<!-- Navbar Superior -->
+<div th:replace="~{fragments/navbar-universal :: navbar('Panel de Control')}"></div>
+
+<!-- Main Content -->
+<div class="main-content pt-5 mt-4" style="transition: var(--transition);">
+    <div class="container-fluid p-4">
+        <!-- Header con bienvenida -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden rounded-4">
+                    <div class="card-body p-4 position-relative" style="z-index: 1;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="fw-bold mb-2">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    Dashboard Administrador
+                                </h2>
+                                <p class="mb-0 opacity-75 fw-light">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    <span th:text="${#dates.format(#dates.createNow(), 'EEEE, dd MMMM yyyy')}"></span>
+                                    <i class="fas fa-clock ms-3 me-2"></i>
+                                    <span id="current-time"></span>
+                                </p>
+                            </div>
+                            <div class="bg-white bg-opacity-10 p-3 rounded-circle d-none d-md-block">
+                                <i class="fas fa-laptop-medical fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="position-absolute top-0 end-0 p-5 mt-5 me-5 opacity-10" style="z-index: 0;">
+                        <i class="fas fa-prescription-bottle-alt fa-8x rotate-15"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Estadísticas -->
+        <div class="row g-4 mb-4">
+            <!-- Ventas Hoy -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4 transition-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-uppercase small fw-bold">Ventas Hoy</span>
+                                <h3 class="fw-bold mt-2 mb-0" th:text="'S/ ' + ${#numbers.formatDecimal(ventasHoy, 1, 2)}">0.00</h3>
+                                <div class="mt-2">
+                                    <span class="badge bg-success-subtle text-success rounded-pill fw-normal" th:text="${cantidadVentasHoy} + ' ventas registrados'">0 ventas</span>
+                                </div>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-4">
+                                <i class="fas fa-shopping-cart fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventas Mes -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4 transition-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-uppercase small fw-bold">Ventas del Mes</span>
+                                <h3 class="fw-bold mt-2 mb-0" th:text="'S/ ' + ${#numbers.formatDecimal(ventasMes, 1, 2)}">0.00</h3>
+                                <div class="mt-2">
+                                    <span class="badge bg-info-subtle text-info rounded-pill fw-normal" th:text="${cantidadVentasMes} + ' ventas'">0 ventas</span>
+                                </div>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded-4">
+                                <i class="fas fa-calendar-check fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4 transition-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-uppercase small fw-bold">Productos</span>
+                                <h3 class="fw-bold mt-2 mb-0" th:text="${totalProductos}">0</h3>
+                                <div class="mt-2">
+                                    <span class="badge bg-warning-subtle text-warning rounded-pill fw-normal" th:text="${cantidadStockBajo} + ' con stock bajo'">0 stock bajo</span>
+                                </div>
+                            </div>
+                            <div class="bg-info bg-opacity-10 p-3 rounded-4">
+                                <i class="fas fa-pills fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clientes -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4 transition-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-uppercase small fw-bold">Clientes</span>
+                                <h3 class="fw-bold mt-2 mb-0" th:text="${totalClientes}">0</h3>
+                                <div class="mt-2">
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill fw-normal" th:text="${clientesNuevosMes} + ' nuevos este mes'">0 nuevos</span>
+                                </div>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-4">
+                                <i class="fas fa-users fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Secundarias -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-secondary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-user-cog text-secondary"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Usuarios Activos</span>
+                                <h5 class="fw-bold mb-0" th:text="${usuariosActivos}">0</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-danger bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-truck text-danger"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Proveedores</span>
+                                <h5 class="fw-bold mb-0" th:text="${totalProveedores}">0</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-qrcode text-primary"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Códigos Generados</span>
+                                <h5 class="fw-bold mb-0" th:text="${totalCodigos}">0</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-success bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fas fa-cash-register text-success"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Saldo en Caja</span>
+                                <h5 class="fw-bold mb-0" th:text="'S/ ' + ${#numbers.formatDecimal(saldoCaja, 1, 2)}">0.00</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-chart-line text-primary me-2"></i>
+                            Ventas de los Últimos 7 Días
+                        </h5>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <canvas id="ventasDiariasChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-chart-pie text-success me-2"></i>
+                            Métodos de Pago
+                        </h5>
+                    </div>
+                    <div class="card-body px-4 pb-4 d-flex align-items-center justify-content-center">
+                        <canvas id="metodosPagoChart" height="280"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-6">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-crown text-warning me-2"></i>
+                            Top 5 Productos Más Vendidos
+                        </h5>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <canvas id="topProductosChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-tags text-info me-2"></i>
+                            Distribución por Categoría
+                        </h5>
+                    </div>
+                    <div class="card-body px-4 pb-4 d-flex align-items-center justify-content-center">
+                        <canvas id="categoriasChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tablas de Últimas Actividades -->
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-history text-primary me-2"></i>
+                            Últimas 10 Ventas
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 px-4">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Método</th>
+                                    <th>Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="venta : ${ultimasVentas}">
+                                    <td class="ps-4">
+                                        <span class="small fw-bold text-primary" th:text="${#strings.substring(venta.numeroVenta, 0, 8)}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${venta.cliente != null ? venta.cliente.nombres + ' ' + venta.cliente.apellidos : 'Cliente General'}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(venta.total, 1, 2)}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill fw-normal" 
+                                              th:classappend="${venta.metodoPago.name() == 'EFECTIVO' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary'}"
+                                              th:text="${venta.metodoPago.displayName}"></span>
+                                    </td>
+                                    <td class="text-muted small" th:text="${#temporals.format(venta.fecha, 'HH:mm')}"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(ultimasVentas)}">
+                                    <td colspan="5" class="text-center py-5 text-muted fst-italic">No hay ventas registradas hoy</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <div class="card-header bg-white border-bottom-0 py-4 px-4">
+                        <h5 class="card-title mb-0 fw-bold text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Alerta de Stock Crítico
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 px-4">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Producto</th>
+                                    <th>Actual</th>
+                                    <th>Mínimo</th>
+                                    <th>Estado</th>
+                                    <th class="pe-4"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="producto : ${listaStockBajo}">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded overflow-hidden me-2 border d-flex align-items-center justify-content-center bg-light" style="width: 38px; height: 38px;">
+                                                <img th:if="${producto.imagenPath != null && !producto.imagenPath.isEmpty()}" 
+                                                     th:src="${producto.imagenPath}" 
+                                                     class="w-100 h-100 object-fit-cover shadow-sm">
+                                                <i th:unless="${producto.imagenPath != null && !producto.imagenPath.isEmpty()}" 
+                                                   class="fas fa-pills text-muted opacity-50" style="font-size: 1rem;"></i>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <span class="small fw-bold text-dark" th:text="${producto.nombre}"></span>
+                                                <small class="text-muted" style="font-size: 0.65rem;" th:text="${producto.laboratorio}"></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger" th:text="${producto.stock}"></span>
+                                    </td>
+                                    <td th:text="${producto.stockMinimo}"></td>
+                                    <td style="width: 100px;">
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-danger" th:style="'width: ' + (${producto.stock} * 100 / ${producto.stockMinimo}) + '%'"></div>
+                                        </div>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <a th:href="@{/admin/productos/editar/{id}(id=${producto.id})}" class="btn btn-sm btn-light border rounded-circle">
+                                            <i class="fas fa-edit text-primary"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listaStockBajo)}">
+                                    <td colspan="5" class="text-center py-5 text-success">
+                                        <i class="fas fa-check-circle me-2"></i>Todo el inventario está correcto
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<!-- Custom Page Logic -->
+<style>
+    .navbar-top {
+        height: 70px;
+        transition: var(--transition);
+        z-index: 1040;
+    }
+    .main-content {
+        min-height: 100vh;
+        background-color: #f8fafc;
+    }
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+    .rotate-15 { transform: rotate(15deg); }
+    .ls-1 { letter-spacing: 1px; }
+    .cursor-pointer { cursor: pointer; }
+</style>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <!-- Chart.js library is essential for visual rendering of stats -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script th:inline="javascript">
+/*<![CDATA[*/
+document.addEventListener('DOMContentLoaded', function() {
+    function updateTime() {
+        const now = new Date();
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+            timeElement.textContent = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Context for charts
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = "#64748b";
+
+    // Sales Chart
+    const ventasPorDiaRaw = /*[[${ventasPorDia}]]*/ [];
+    const ctxVentas = document.getElementById('ventasDiariasChart').getContext('2d');
+    new Chart(ctxVentas, {
+        type: 'line',
+        data: {
+            labels: ventasPorDiaRaw.map(item => {
+                const date = new Date(item[0]);
+                return date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
+            }),
+            datasets: [{
+                label: 'Ventas (S/)',
+                data: ventasPorDiaRaw.map(item => item[2] || 0),
+                borderColor: '#4361ee',
+                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#4361ee',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { borderDash: [5, 5], color: '#e2e8f0' }, ticks: { callback: value => 'S/ ' + value } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Payment Methods
+    const metodosPagoRaw = /*[[${ventasPorMetodoPago}]]*/ [];
+    const ctxMetodos = document.getElementById('metodosPagoChart').getContext('2d');
+    new Chart(ctxMetodos, {
+        type: 'doughnut',
+        data: {
+            labels: metodosPagoRaw.map(item => item[0]),
+            datasets: [{
+                data: metodosPagoRaw.map(item => item[1] || 0), // Use counts for doughnut share
+                backgroundColor: ['#4361ee', '#10b981', '#f59e0b', '#ef4444', '#64748b', '#0dcaf0'],
+                borderWidth: 0,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { size: 11 } } }
+            }
+        }
+    });
+
+    // Top Products
+    const topProductosRaw = /*[[${topProductos}]]*/ [];
+    const ctxProductos = document.getElementById('topProductosChart').getContext('2d');
+    new Chart(ctxProductos, {
+        type: 'bar',
+        data: {
+            labels: topProductosRaw.map(item => item[0]),
+            datasets: [{
+                label: 'Cantidad Vendida',
+                data: topProductosRaw.map(item => item[1] || 0),
+                backgroundColor: 'rgba(67, 97, 238, 0.8)',
+                hoverBackgroundColor: '#4361ee',
+                borderRadius: 8,
+                barThickness: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, grid: { display: false } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Categories
+    const categoriasRaw = /*[[${productosPorCategoria}]]*/ [];
+    const ctxCategorias = document.getElementById('categoriasChart').getContext('2d');
+    new Chart(ctxCategorias, {
+        type: 'polarArea',
+        data: {
+            labels: categoriasRaw.map(item => item[0]),
+            datasets: [{
+                data: categoriasRaw.map(item => item[1] || 0),
+                backgroundColor: [
+                    'rgba(67, 97, 238, 0.7)', 
+                    'rgba(16, 185, 129, 0.7)', 
+                    'rgba(245, 158, 11, 0.7)', 
+                    'rgba(239, 68, 68, 0.7)', 
+                    'rgba(100, 116, 139, 0.7)'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { ticks: { display: false }, grid: { color: '#f1f5f9' } }
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } }
+            }
+        }
+    });
+});
+/*]]>*/
+    </script>
+</body>
+</html>

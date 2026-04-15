@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión Global de Usuarios | PharmaSync')}"></head>
+<body class="bg-dark text-white">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <main class="main-content main-content-super">
+        <header th:replace="~{fragments/navbar-admin :: navbar('Usuarios del Ecosistema')}"></header>
+
+        <div class="container-fluid py-4 mt-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 bg-light overflow-hidden">
+                        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold text-dark mb-0"><i class="fas fa-users-cog me-2 text-primary"></i>Lista Maestra de Usuarios</h5>
+                            <span class="badge bg-primary rounded-pill px-3 py-2" th:text="${usuarios.size()} + ' Registrados'">0 Registrados</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-white text-muted small fw-bold">
+                                        <tr>
+                                            <th class="ps-4">USUARIO</th>
+                                            <th>EMPRESA / TENANT</th>
+                                            <th>ROLES</th>
+                                            <th>ESTADO</th>
+                                            <th>ÚLTIMO ACCESO</th>
+                                            <th class="text-end pe-4">ESTADÍSTICAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-dark">
+                                        <tr th:each="u : ${usuarios}">
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-secondary text-white p-2 rounded-circle me-3 text-center" style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-user-circle fa-lg"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold" th:text="${u.nombres + ' ' + u.apellidos}">Nombre</div>
+                                                        <div class="small text-muted" th:text="${u.username}">username</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="text-primary fw-bold" th:text="${u.empresaId != null ? 'Tenant ID: ' + u.empresaId : 'PLATAFORMA'}">Empresa</span>
+                                            </td>
+                                            <td>
+                                                <span th:each="rol : ${u.roles}" 
+                                                      class="badge bg-dark text-white rounded-pill x-small me-1" 
+                                                      th:text="${rol}">ROL</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge rounded-pill" th:classappend="${u.activo} ? 'bg-success' : 'bg-danger'"
+                                                      th:text="${u.activo} ? 'ACTIVO' : 'INACTIVO'">Estado</span>
+                                            </td>
+                                            <td class="small text-muted" th:text="${u.ultimoAcceso != null ? #temporals.format(u.ultimoAcceso, 'dd/MM/yyyy HH:mm') : 'Nunca'}">Nunca</td>
+                                            <td class="text-end pe-4">
+                                                <span class="text-muted small">ID: <span th:text="${u.id}">0</span></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

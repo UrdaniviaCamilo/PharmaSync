@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:fragment="navbar-style">
+        .navbar-top {
+            height: 70px;
+            transition: var(--transition);
+            z-index: 1040;
+            background-color: #ffffff;
+        }
+        .x-small { font-size: 0.75rem; }
+        .line-height-1 { line-height: 1.1; }
+        .navbar-role-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div th:fragment="navbar(pageTitle)">
+    <nav class="navbar-top shadow-sm px-4 py-2 bg-white d-flex align-items-center justify-content-between position-fixed top-0 end-0 border-bottom" 
+         style="left: var(--sidebar-width); z-index: 1000; transition: var(--transition);">
+        
+        <div class="navbar-left d-flex align-items-center">
+            <button class="btn btn-link text-dark d-md-none me-3 menu-toggle-mobile" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div>
+                <h1 class="page-title h4 fw-bold mb-0">
+                    <span th:text="${pageTitle}">Dashboard</span>
+                    <small class="text-muted small ms-2 d-none d-sm-inline" th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}"></small>
+                </h1>
+            </div>
+        </div>
+
+        <div class="search-wrapper mx-4 d-none d-lg-flex position-relative flex-grow-1" style="max-width: 400px;">
+            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            <input type="text" placeholder="Buscar productos, clientes..." class="form-control form-control-sm ps-5 bg-light border-0 rounded-pill">
+        </div>
+
+        <div class="navbar-right d-flex align-items-center gap-3">
+            <!-- Notificaciones (Stock y Vencimiento) -->
+            <div class="dropdown">
+                <button class="btn btn-link text-decoration-none position-relative p-2" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell fs-5 text-muted"></i>
+                    <span class="badge position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
+                          th:if="${totalNotificaciones > 0}" th:text="${totalNotificaciones}" style="font-size: 0.6rem; padding: 0.25rem 0.4rem;">0</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-0 mt-3" aria-labelledby="notifDropdown" style="width: 320px; max-height: 450px; overflow-y: auto;">
+                    <li class="px-3 py-3 border-bottom bg-light rounded-top-4">
+                        <h6 class="mb-0 fw-bold">Alertas del Sistema</h6>
+                    </li>
+                    <!-- Alertas de Stock Bajo -->
+                    <li th:each="prod : ${listaStockBajo}">
+                        <a class="dropdown-item p-3 d-flex align-items-start gap-3 border-bottom" th:href="@{/admin/productos(stockBajo=true)}">
+                            <div class="bg-danger-subtle text-danger p-2 rounded-3">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-0 small fw-bold text-dark" th:text="${prod.nombre}">Producto</p>
+                                <p class="mb-0 x-small text-muted" th:text="'Crítico: ' + ${prod.stock} + ' unidades restantes'"></p>
+                            </div>
+                        </a>
+                    </li>
+                    <!-- Alertas de Vencimiento -->
+                    <li th:each="prod : ${listaPorVencer}">
+                        <a class="dropdown-item p-3 d-flex align-items-start gap-3 border-bottom" th:href="@{/admin/productos}">
+                            <div class="bg-warning-subtle text-warning p-2 rounded-3">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-0 small fw-bold text-dark" th:text="${prod.nombre}">Producto</p>
+                                <p class="mb-0 x-small text-muted" th:text="'Vence el: ' + ${#temporals.format(prod.fechaVencimiento, 'dd/MM/yyyy')}"></p>
+                            </div>
+                        </a>
+                    </li>
+                    <!-- Alertas de DIGEMID (Global) -->
+                    <li th:each="alert : ${digemidAlerts}">
+                        <a class="dropdown-item p-3 d-flex align-items-start gap-3 border-bottom" th:href="${alert.link}" target="_blank">
+                            <div class="bg-primary text-white p-2 rounded-3 shadow-sm">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-0 x-small fw-bold text-primary">DIGEMID PERÚ</p>
+                                <p class="mb-0 small fw-bold text-dark text-wrap" th:text="${alert.titulo}">Título de Alerta</p>
+                                <p class="mb-0 x-small text-muted" th:text="'Publicado: ' + ${alert.fecha}"></p>
+                            </div>
+                        </a>
+                    </li>
+                    <li th:if="${totalNotificaciones == 0}" class="p-5 text-center text-muted">
+                        <i class="fas fa-check-circle fa-3x mb-3 text-success opacity-25"></i>
+                        <p class="mb-0 text-dark fw-medium">¡Todo en orden!</p>
+                        <span class="x-small">No hay alertas críticas pendientes.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Usuario -->
+            <div class="dropdown ps-3 border-start">
+                <button class="btn btn-link text-decoration-none dropdown-toggle d-flex align-items-center gap-2 p-0" 
+                        type="button" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img th:src="${usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty() ? usuario.fotoPerfil : 'https://ui-avatars.com/api/?name=' + usuario.nombres + '&background=random'}" 
+                         alt="Perfil" class="rounded-circle border" style="width: 35px; height: 35px; object-fit: cover;">
+                    <div class="text-start d-none d-md-block">
+                        <span class="d-block fw-bold small text-dark line-height-1" th:text="${usuario.nombres}">Usuario</span>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill navbar-role-badge mt-1" th:text="${usuario.roles != null && !usuario.roles.isEmpty() ? (usuario.roles.iterator().next().toString().replace('ROLE_', '')) : 'USUARIO'}">ROL</span>
+                    </div>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2 mt-3" aria-labelledby="userProfileDropdown" style="min-width: 200px;">
+                    <li class="px-3 py-2 border-bottom mb-2">
+                        <p class="mb-0 small fw-bold text-dark" th:text="${usuario.nombres + ' ' + usuario.apellidos}"></p>
+                        <p class="mb-0 x-small text-muted" th:text="${usuario.email}"></p>
+                    </li>
+                    <li><a class="dropdown-item rounded-3 py-2" th:href="@{/perfil/ajustes}"><i class="fas fa-user-cog me-2 text-primary opacity-75"></i>Mi Perfil</a></li>
+                    <li><hr class="dropdown-divider mx-2"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="dropdown-item rounded-3 py-2 text-danger fw-bold">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    </div>
+</body>
+</html>

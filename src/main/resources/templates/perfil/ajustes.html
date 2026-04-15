@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(title='Configuración de Perfil')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+    
+    <div th:replace="~{fragments/navbar-universal :: navbar('Configuración de Perfil')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <div class="container-fluid p-4">
+            
+            <div th:if="${success}" class="alert alert-success border-0 shadow-sm rounded-4 mb-4 alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="row g-4">
+                <!-- Profile Summary & Photo (Left Column - Admin Style) -->
+                <div class="col-lg-4">
+                    <!-- User Profile Card -->
+                    <div class="card glass-card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+                        <div class="card-body text-center p-5">
+                            <div class="position-relative d-inline-block mb-4">
+                                <img th:src="${usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty() ? usuario.fotoPerfil : 'https://ui-avatars.com/api/?name=' + usuario.nombres + '+' + usuario.apellidos + '&background=random&size=256'}" 
+                                     id="profilePreview" class="rounded-circle border border-4 border-white shadow-lg" 
+                                     style="width: 150px; height: 150px; object-fit: cover;">
+                                <label for="photoInput" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow cursor-pointer">
+                                    <i class="fas fa-camera"></i>
+                                </label>
+                                <input type="file" id="photoInput" class="d-none" accept="image/*" onchange="previewAndSavePhoto(this)">
+                            </div>
+                            <h4 class="fw-bold mb-1 text-dark" th:text="${usuario.nombres + ' ' + usuario.apellidos}">Nombre del Usuario</h4>
+                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-bold" 
+                                  th:text="${usuario.roles != null && !usuario.roles.isEmpty() ? usuario.roles.iterator().next().toString().replace('ROLE_', '') : 'USUARIO'}">ROL</span>
+                            <p class="text-muted small mb-0" th:text="${usuario.email}"></p>
+                        </div>
+                        <div class="card-footer bg-light border-0 p-4">
+                             <form id="formPhoto" th:action="@{/perfil/ajustes/foto}" method="post">
+                                <input type="hidden" name="fotoPerfil" id="fotoHidden">
+                                <button type="button" id="btnSavePhoto" class="btn btn-primary w-100 rounded-pill fw-bold d-none" onclick="submitPhoto()">
+                                    <i class="fas fa-save me-2"></i>Guardar Nueva Foto
+                                </button>
+                             </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Information Stats -->
+                    <div class="card glass-card border-0 shadow-sm rounded-4 bg-white">
+                        <div class="card-body p-4">
+                            <h6 class="text-uppercase text-muted fw-bold ls-1 mb-4 small">Detalles de Cuenta</h6>
+                            
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary-subtle text-primary p-3 rounded-circle me-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="mb-0 x-small text-muted fw-bold text-uppercase">Nombre de Usuario</p>
+                                    <p class="mb-0 fw-bold text-dark" th:text="${usuario.username}">username</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success-subtle text-success p-3 rounded-circle me-3">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="mb-0 x-small text-muted fw-bold text-uppercase">Empresa / Sede</p>
+                                    <p class="mb-0 fw-bold text-dark" th:text="${config != null ? config.nombreFarmacia : 'CONTROL MAESTRO'}">Droguería Londres</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Forms (Right Column) -->
+                <div class="col-lg-8">
+                    <!-- General Information Card -->
+                    <div class="card glass-card border-0 shadow-sm rounded-4 mb-4 bg-white">
+                        <div class="card-header bg-white border-bottom-0 p-4">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-address-card text-primary me-2"></i>Información Personal</h5>
+                            <p class="text-muted small mb-0">Actualiza tus datos de contacto y nombres corporativos.</p>
+                        </div>
+                        <div class="card-body p-4 border-top">
+                            <form th:action="@{/perfil/ajustes/guardar}" method="post">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Nombres</label>
+                                        <input type="text" name="nombres" th:value="${usuario.nombres}" class="form-control form-control-modern" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Apellidos</label>
+                                        <input type="text" name="apellidos" th:value="${usuario.apellidos}" class="form-control form-control-modern" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Correo Electrónico Laboral</label>
+                                        <input type="email" name="email" th:value="${usuario.email}" class="form-control form-control-modern" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Teléfono / WhatsApp</label>
+                                        <input type="text" name="telefono" th:value="${usuario.telefono}" class="form-control form-control-modern" placeholder="Ej: +51 987 654 321">
+                                    </div>
+                                    <div class="col-12 mt-4">
+                                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                            Guardar Datos Personales
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Security / Password Card -->
+                    <div class="card glass-card border-0 shadow-sm rounded-4 bg-white">
+                        <div class="card-header bg-white border-bottom-0 p-4">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-shield-alt text-danger me-2"></i>Seguridad de la Cuenta</h5>
+                            <p class="text-muted small mb-0">Te recomendamos cambiar tu contraseña periódicamente por seguridad.</p>
+                        </div>
+                        <div class="card-body p-4 border-top">
+                            <form th:action="@{/perfil/ajustes/cambiar-password}" method="post" id="formPassword">
+                                <div class="row g-4">
+                                    <div class="col-md-12">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Contraseña Actual</label>
+                                        <input type="password" name="passwordActual" class="form-control form-control-modern" 
+                                               placeholder="Ingresa tu contraseña actual" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Nueva Contraseña</label>
+                                        <input type="password" name="passwordNueva" id="pw1" class="form-control form-control-modern" 
+                                               placeholder="Mínimo 6 caracteres" minlength="6" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label x-small fw-bold text-muted text-uppercase">Confirmar Nueva Contraseña</label>
+                                        <input type="password" name="passwordConfirm" id="pw2" class="form-control form-control-modern" 
+                                               placeholder="Repite la nueva contraseña" minlength="6" required>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div id="pwMessage" class="small mb-3 d-none"></div>
+                                        <button type="submit" class="btn btn-danger rounded-pill px-5 fw-bold" id="btnPw" disabled>
+                                            <i class="fas fa-lock me-2"></i>Actualizar Contraseña
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .form-control-modern {
+            padding: 0.85rem 1.25rem;
+            border-radius: 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .form-control-modern:focus {
+            background-color: #fff;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+        }
+        .x-small { font-size: 0.75rem; }
+        .ls-1 { letter-spacing: 1px; }
+        .glass-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .cursor-pointer { cursor: pointer; }
+        
+        /* Sidebar transition adjustment */
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+    </style>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script th:inline="javascript">
+        function previewAndSavePhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    document.getElementById('profilePreview').src = base64;
+                    document.getElementById('fotoHidden').value = base64;
+                    document.getElementById('btnSavePhoto').classList.remove('d-none');
+                    
+                    Swal.fire({
+                        title: '¡Nueva foto detectada!',
+                        text: "¿Deseas guardar este cambio ahora?",
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, aplicar',
+                        cancelButtonText: 'Solo previsualizar',
+                        confirmButtonColor: '#4361ee'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            submitPhoto();
+                        }
+                    });
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitPhoto() {
+            document.getElementById('formPhoto').submit();
+        }
+
+        const pw1 = document.getElementById('pw1');
+        const pw2 = document.getElementById('pw2');
+        const msg = document.getElementById('pwMessage');
+        const btn = document.getElementById('btnPw');
+
+        function checkMatch() {
+            if (pw1.value && pw2.value) {
+                msg.classList.remove('d-none');
+                if (pw1.value === pw2.value) {
+                    msg.innerHTML = '<i class="fas fa-check-circle me-1"></i> Las contraseñas coinciden perfectamente.';
+                    msg.className = 'small mb-3 text-success p-2 bg-success-subtle rounded-3';
+                    btn.disabled = false;
+                } else {
+                    msg.innerHTML = '<i class="fas fa-times-circle me-1"></i> Las contraseñas no coinciden.';
+                    msg.className = 'small mb-3 text-danger p-2 bg-danger-subtle rounded-3';
+                    btn.disabled = true;
+                }
+            } else {
+                msg.classList.add('d-none');
+                btn.disabled = true;
+            }
+        }
+
+        pw1.addEventListener('input', checkMatch);
+        pw2.addEventListener('input', checkMatch);
+    </script>
+</body>
+</html>

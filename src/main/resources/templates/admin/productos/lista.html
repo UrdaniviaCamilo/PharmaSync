@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Inventario de Productos')}"></head>
+<body class="bg-light">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <!-- Navbar Superior -->
+    <div th:replace="~{fragments/navbar-universal :: navbar('Inventario de Productos')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <div class="container-fluid p-4">
+            
+            <!-- Header & KPIs (Style like Sales) -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1 h3">Inventario & Catálogo</h2>
+                    <p class="text-muted mb-0 small">Control total de stock, precios y vencimientos.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/admin/codigos}" class="btn btn-outline-primary rounded-pill px-3 shadow-sm fw-bold btn-sm">
+                        <i class="fas fa-qrcode me-1"></i>Códigos
+                    </a>
+                    <a th:href="@{/admin/productos/nuevo}" class="btn btn-primary rounded-pill px-3 shadow-sm fw-bold btn-sm">
+                        <i class="fas fa-plus-circle me-1"></i>Nuevo
+                    </a>
+                </div>
+            </div>
+
+            <!-- KPIs Section (Compact) -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-2 bg-white border-start-primary">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 me-2">
+                                <i class="fas fa-pills text-primary fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 x-small uppercase fw-bold">Total</h6>
+                                <h4 class="fw-bold mb-0" th:text="${totalProductos}">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-2 bg-white border-start-danger">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-2">
+                                <i class="fas fa-exclamation-triangle text-danger fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 x-small uppercase fw-bold">Stock Bajo</h6>
+                                <h4 class="fw-bold mb-0 text-danger" th:text="${productosBajoStock}">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-2 bg-white border-start-warning">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-2">
+                                <i class="fas fa-clock text-warning fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 x-small uppercase fw-bold">Por Vencer</h6>
+                                <h4 class="fw-bold mb-0 text-warning" th:text="${productosVencimiento}">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-2 bg-white border-start-info">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-info bg-opacity-10 p-2 me-2">
+                                <i class="fas fa-layer-group text-info fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 x-small uppercase fw-bold">Categorías</h6>
+                                <h4 class="fw-bold mb-0" th:text="${#lists.size(categorias)}">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Filters (Compact) -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-2">
+                    <form th:action="@{/admin/productos}" method="get" class="row g-2 align-items-center">
+                        <div class="col-md-4">
+                            <div class="input-group bg-light rounded-3 border-0">
+                                <span class="input-group-text bg-transparent border-0"><i class="fas fa-search text-muted small"></i></span>
+                                <input type="text" name="search" class="form-control border-0 bg-transparent form-control-sm" 
+                                       placeholder="Buscar medicamento..." th:value="${searchQuery}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="categoriaId" class="form-select border-0 bg-light rounded-3 form-select-sm">
+                                <option value="">Todas las categorías</option>
+                                <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}" 
+                                        th:selected="${cat.id == categoriaSeleccionada}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" name="stockBajo" id="stockBajoCheck" th:checked="${stockBajoFiltro}">
+                                <label class="form-check-label x-small fw-bold text-muted" for="stockBajoCheck">Solo Stock Bajo</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-3">
+                                <i class="fas fa-filter me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/admin/productos}" class="btn btn-light btn-sm rounded-3">
+                                <i class="fas fa-undo"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Grid - COMPACT -->
+            <div th:unless="${#lists.isEmpty(productos)}" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 g-3 mb-4">
+                <div class="col" th:each="producto : ${productos}">
+                    <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden position-relative product-card transition-all" style="min-height: 320px;">
+                        
+                        <!-- Image Section (Reduced height) -->
+                        <div class="bg-light d-flex align-items-center justify-content-center border-bottom position-relative" style="height: 140px;">
+                            <img th:if="${producto.imagenPath != null}" th:src="${producto.imagenPath}" class="w-100 h-100 object-fit-cover" alt="Producto">
+                            <i th:unless="${producto.imagenPath != null}" class="fas fa-pills fa-3x text-muted opacity-25"></i>
+                            
+                            <!-- Badges Top Left/Right -->
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-primary bg-opacity-75 text-white rounded-pill px-2 py-1 shadow-sm border border-primary-subtle backdrop-blur x-small" 
+                                      th:text="${producto.categoria != null ? producto.categoria.nombre : 'General'}">Cat</span>
+                            </div>
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span th:if="${producto.fechaVencimiento != null}" 
+                                      class="badge rounded-pill shadow-sm backdrop-blur x-small"
+                                      th:classappend="${producto.fechaVencimiento.isBefore(#temporals.createNow().toLocalDate().plusMonths(1)) ? 'bg-danger text-white' : 'bg-light text-dark border'}"
+                                      th:text="${#temporals.format(producto.fechaVencimiento, 'MM/yy')}">
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Body (Compact) -->
+                        <div class="card-body d-flex flex-column p-3">
+                            <h6 class="card-title fw-bold text-dark text-truncate mb-1" style="font-size: 0.9rem;" th:text="${producto.nombre}">Nombre</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted text-truncate fw-medium" style="font-size: 0.7rem;">
+                                    <i class="fas fa-flask me-1 small"></i><span th:text="${producto.laboratorio}">Lab</span>
+                                </small>
+                                <small class="text-muted text-truncate" style="font-size: 0.7rem;">
+                                    <i class="fas fa-box me-1 small"></i><span th:text="${producto.presentacion}">Pres</span>
+                                </small>
+                            </div>
+                            
+                            <!-- Price & Stock (Compact) -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto mb-2 p-2 bg-light rounded-2">
+                                <div>
+                                    <span class="fw-bold text-primary small" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precioVenta, 1, 2)}">0.00</span>
+                                </div>
+                                <div class="text-end">
+                                    <span th:if="${producto.stock <= 0}" class="badge bg-danger fw-bold rounded-pill x-small">Agotado</span>
+                                    <span th:if="${producto.stock > 0 && producto.stock <= producto.stockMinimo}" class="badge bg-warning text-dark fw-bold rounded-pill x-small">[[${producto.stock}]] ud</span>
+                                    <span th:if="${producto.stock > producto.stockMinimo}" class="badge bg-success text-white fw-bold rounded-pill x-small">[[${producto.stock}]] ud</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions (Compact Icons) -->
+                            <div class="d-flex justify-content-center gap-3 border-top pt-2 mt-auto">
+                                <button type="button" class="btn btn-sm btn-light rounded-circle p-2 text-primary hover-grow shadow-sm" th:onclick="'verDetalles(' + ${producto.id} + ')'" title="Ver Detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a th:href="@{/admin/productos/editar/{id}(id=${producto.id})}" class="btn btn-sm btn-light rounded-circle p-2 text-success hover-grow shadow-sm" title="Editar">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-light rounded-circle p-2 text-danger hover-grow shadow-sm" th:onclick="'confirmDelete(' + ${producto.id} + ')'" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Floating Add Button for Mobile -->
+            <div class="d-md-none position-fixed bottom-0 end-0 m-4 shadow-lg" style="z-index: 1000;">
+                <a th:href="@{/admin/productos/nuevo}" class="btn btn-primary btn-lg rounded-circle shadow-lg" style="width: 60px; height: 60px; padding-top: 15px;">
+                    <i class="fas fa-plus fs-4"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <style>
+        .border-start-primary { border-left: 4px solid #4361ee !important; }
+        .border-start-danger { border-left: 4px solid #ef4444 !important; }
+        .border-start-warning { border-left: 4px solid #f59e0b !important; }
+        .border-start-info { border-left: 4px solid #06b6d4 !important; }
+        .ls-1 { letter-spacing: 0.5px; }
+        .line-height-1 { line-height: 1.2; }
+        .transition-all { transition: all 0.3s ease; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; }
+        .backdrop-blur { backdrop-filter: blur(5px); }
+        .action-link { transition: all 0.2s ease-in-out; border-radius: 0; }
+        .action-link:hover { background-color: #f8f9fa; }
+        .hover-info:hover { color: #06b6d4 !important; }
+        .hover-info:hover i { transform: scale(1.1); transition: transform 0.2s; }
+        .hover-primary:hover { color: #4361ee !important; }
+        .hover-primary:hover i { transform: scale(1.1); transition: transform 0.2s; }
+        .hover-danger:hover { color: #ef4444 !important; }
+        .hover-danger:hover i { transform: scale(1.1); transition: transform 0.2s; }
+    </style>
+
+    <script th:inline="javascript">
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Confirmar eliminación?',
+                text: "El producto se marcará como inactivo o se eliminará permanentemente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4361ee',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: { popup: 'rounded-4 border-0 shadow-lg' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/admin/productos/eliminar/' + id;
+                }
+            });
+        }
+
+        function verDetalles(id) {
+            // Simplified view for now
+            window.location.href = '/admin/productos/editar/' + id;
+        }
+    </script>
+
+</body>
+</html>

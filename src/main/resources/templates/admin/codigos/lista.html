@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Códigos de Productos')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <!-- Navbar Superior -->
+    <div th:replace="~{fragments/navbar-universal :: navbar('Gestión de Códigos')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+
+        <div class="container-fluid p-4">
+            
+            <div class="row g-4">
+                <div class="col-xl-3 col-lg-4 col-md-6" th:each="producto : ${productos}">
+                    <div class="glass-card h-100 bg-white border-0 shadow-sm overflow-hidden position-relative hover-grow">
+                        <div class="p-4 text-center">
+                            <div class="feature-icon bg-light text-primary mx-auto mb-3"><i class="fas fa-barcode"></i></div>
+                            <h6 class="fw-bold mb-1 text-truncate" th:text="${producto.nombre}">Nombre del Producto</h6>
+                            <small class="text-muted d-block mb-3" th:text="${producto.laboratorio}">Laboratorio</small>
+                            <a th:href="@{/admin/codigos/producto/{id}(id=${producto.id})}" class="btn btn-primary w-100 rounded-pill fw-bold">
+                                <i class="fas fa-eye me-2"></i>Ver Códigos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty State -->
+                <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(productos)}">
+                    <div class="opacity-25 mb-4"><i class="fas fa-qrcode fa-5x"></i></div>
+                    <h4 class="text-muted">No hay productos para generar códigos</h4>
+                    <a th:href="@{/admin/productos/nuevo}" class="btn btn-primary rounded-pill px-5 mt-3">Crear Producto</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

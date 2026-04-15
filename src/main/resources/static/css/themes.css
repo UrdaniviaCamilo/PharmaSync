@@ -1,0 +1,466 @@
+/* =============================================
+   DROGUERÍA LONDRES - SISTEMA DE TEMAS PREMIUM
+   ============================================= */
+
+
+body {
+    --theme-sidebar-bg: #ffffff;
+    --theme-sidebar-text: #1e293b;
+    --theme-sidebar-border: #e2e8f0;
+    --theme-sidebar-active-bg: #eef2ff;
+    --theme-sidebar-active-text: #4361ee;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #f8fafc;
+    --theme-card-bg: #ffffff;
+    --theme-text: #1e293b;
+    --theme-text-muted: #64748b;
+    --theme-primary: #4361ee;
+    --theme-primary-light: #eef2ff;
+    --theme-border: #e2e8f0;
+}
+
+/* ─── 1. AZUL PROFESIONAL (modern-blue) ─── */
+.theme-modern-blue {
+    --theme-sidebar-bg: #0f172a;
+    --theme-sidebar-text: #e2e8f0;
+    --theme-sidebar-border: #1e293b;
+    --theme-sidebar-active-bg: rgba(59, 130, 246, 0.15);
+    --theme-sidebar-active-text: #60a5fa;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #f0f5ff;
+    --theme-card-bg: #ffffff;
+    --theme-text: #0f172a;
+    --theme-text-muted: #475569;
+    --theme-primary: #3b82f6;
+    --theme-primary-light: #dbeafe;
+    --theme-border: #bfdbfe;
+}
+.theme-modern-blue .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-modern-blue .sidebar .sidebar-title,
+.theme-modern-blue .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-modern-blue .sidebar .nav-item {
+    color: #94a3b8;
+}
+.theme-modern-blue .sidebar .nav-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+}
+.theme-modern-blue .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-modern-blue .sidebar .nav-section-title {
+    color: #475569 !important;
+}
+.theme-modern-blue .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-modern-blue .sidebar-search-input {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155 !important;
+}
+.theme-modern-blue .sidebar-footer {
+    border-color: #1e293b !important;
+}
+.theme-modern-blue .sidebar-footer .text-muted {
+    color: #475569 !important;
+}
+
+/* ─── 2. VERDE FARMACIA (emerald-green) ─── */
+.theme-emerald-green {
+    --theme-sidebar-bg: #022c22;
+    --theme-sidebar-text: #d1fae5;
+    --theme-sidebar-border: #064e3b;
+    --theme-sidebar-active-bg: rgba(16, 185, 129, 0.15);
+    --theme-sidebar-active-text: #34d399;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #f0fdf4;
+    --theme-card-bg: #ffffff;
+    --theme-text: #022c22;
+    --theme-text-muted: #4b7360;
+    --theme-primary: #10b981;
+    --theme-primary-light: #d1fae5;
+    --theme-border: #a7f3d0;
+}
+.theme-emerald-green .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-emerald-green .sidebar .sidebar-title,
+.theme-emerald-green .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-emerald-green .sidebar .nav-item {
+    color: #6ee7b7;
+}
+.theme-emerald-green .sidebar .nav-item:hover {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+.theme-emerald-green .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-emerald-green .sidebar .nav-section-title {
+    color: #4b7360 !important;
+}
+.theme-emerald-green .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-emerald-green .sidebar-search-input {
+    background: #064e3b !important;
+    color: #d1fae5 !important;
+    border: 1px solid #065f46 !important;
+}
+.theme-emerald-green .sidebar-footer {
+    border-color: #064e3b !important;
+}
+.theme-emerald-green .sidebar-footer .text-muted {
+    color: #4b7360 !important;
+}
+.theme-emerald-green .btn-primary {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+}
+.theme-emerald-green .btn-primary:hover {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+}
+.theme-emerald-green .text-primary {
+    color: #10b981 !important;
+}
+
+/* ─── 3. MODO OSCURO (minimal-dark) ─── */
+.theme-minimal-dark {
+    --theme-sidebar-bg: #111111;
+    --theme-sidebar-text: #e5e5e5;
+    --theme-sidebar-border: #262626;
+    --theme-sidebar-active-bg: rgba(139, 92, 246, 0.15);
+    --theme-sidebar-active-text: #a78bfa;
+    --theme-navbar-bg: #1a1a2e;
+    --theme-body-bg: #0f0f0f;
+    --theme-card-bg: #1a1a1a;
+    --theme-text: #f5f5f5;
+    --theme-text-muted: #a3a3a3;
+    --theme-primary: #8b5cf6;
+    --theme-primary-light: rgba(139, 92, 246, 0.15);
+    --theme-border: #333333;
+}
+.theme-minimal-dark {
+    background-color: var(--theme-body-bg) !important;
+    color: var(--theme-text) !important;
+}
+.theme-minimal-dark .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-minimal-dark .sidebar .sidebar-title,
+.theme-minimal-dark .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-minimal-dark .sidebar .nav-item {
+    color: #a3a3a3;
+}
+.theme-minimal-dark .sidebar .nav-item:hover {
+    background: rgba(139, 92, 246, 0.08);
+    color: #a78bfa;
+}
+.theme-minimal-dark .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-minimal-dark .sidebar .nav-section-title {
+    color: #525252 !important;
+}
+.theme-minimal-dark .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-minimal-dark .navbar-top {
+    background-color: var(--theme-navbar-bg) !important;
+    border-color: #262626 !important;
+}
+.theme-minimal-dark .navbar-top .page-title,
+.theme-minimal-dark .navbar-top .page-title span,
+.theme-minimal-dark .navbar-top .fw-bold {
+    color: #e5e5e5 !important;
+}
+.theme-minimal-dark .navbar-top .text-muted,
+.theme-minimal-dark .navbar-top .fa-bell,
+.theme-minimal-dark .navbar-top .fa-search {
+    color: #737373 !important;
+}
+.theme-minimal-dark .card,
+.theme-minimal-dark .glass-card {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-border) !important;
+    color: var(--theme-text) !important;
+}
+.theme-minimal-dark .card h1, .theme-minimal-dark .card h2,
+.theme-minimal-dark .card h3, .theme-minimal-dark .card h4,
+.theme-minimal-dark .card h5, .theme-minimal-dark .card h6,
+.theme-minimal-dark .glass-card h1, .theme-minimal-dark .glass-card h2,
+.theme-minimal-dark .glass-card h3, .theme-minimal-dark .glass-card h4,
+.theme-minimal-dark .glass-card h5, .theme-minimal-dark .glass-card h6 {
+    color: #f5f5f5 !important;
+}
+.theme-minimal-dark .bg-white {
+    background-color: #1a1a1a !important;
+}
+.theme-minimal-dark .bg-light {
+    background-color: #262626 !important;
+}
+.theme-minimal-dark .text-dark {
+    color: #e5e5e5 !important;
+}
+.theme-minimal-dark .form-control,
+.theme-minimal-dark .form-select {
+    background-color: #262626 !important;
+    color: #e5e5e5 !important;
+    border-color: #404040 !important;
+}
+.theme-minimal-dark .table {
+    color: #d4d4d4 !important;
+}
+.theme-minimal-dark .table thead {
+    background-color: #1f1f1f !important;
+}
+.theme-minimal-dark .dropdown-menu {
+    background-color: #1a1a1a !important;
+    border-color: #333 !important;
+}
+.theme-minimal-dark .dropdown-item {
+    color: #d4d4d4 !important;
+}
+.theme-minimal-dark .dropdown-item:hover {
+    background-color: #262626 !important;
+}
+.theme-minimal-dark .border-bottom {
+    border-color: #333 !important;
+}
+.theme-minimal-dark .sidebar-search-input {
+    background: #1a1a1a !important;
+    color: #e5e5e5 !important;
+    border: 1px solid #333 !important;
+}
+.theme-minimal-dark .sidebar-footer {
+    border-color: #262626 !important;
+}
+.theme-minimal-dark .sidebar-footer .text-muted {
+    color: #525252 !important;
+}
+.theme-minimal-dark .btn-primary {
+    background-color: #8b5cf6 !important;
+    border-color: #8b5cf6 !important;
+}
+.theme-minimal-dark .text-primary {
+    color: #a78bfa !important;
+}
+.theme-minimal-dark .alert {
+    background-color: #1a1a1a !important;
+    border-color: #333 !important;
+}
+
+/* ─── 4. PÚRPURA SUAVE (soft-purple) ─── */
+.theme-soft-purple {
+    --theme-sidebar-bg: #1e1033;
+    --theme-sidebar-text: #e9d5ff;
+    --theme-sidebar-border: #2d1b4e;
+    --theme-sidebar-active-bg: rgba(168, 85, 247, 0.15);
+    --theme-sidebar-active-text: #c084fc;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #faf5ff;
+    --theme-card-bg: #ffffff;
+    --theme-text: #1e1033;
+    --theme-text-muted: #6b5b7b;
+    --theme-primary: #a855f7;
+    --theme-primary-light: #f3e8ff;
+    --theme-border: #e9d5ff;
+}
+.theme-soft-purple .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-soft-purple .sidebar .sidebar-title,
+.theme-soft-purple .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-soft-purple .sidebar .nav-item {
+    color: #c4b5d4;
+}
+.theme-soft-purple .sidebar .nav-item:hover {
+    background: rgba(168, 85, 247, 0.1);
+    color: #c084fc;
+}
+.theme-soft-purple .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-soft-purple .sidebar .nav-section-title {
+    color: #6b5b7b !important;
+}
+.theme-soft-purple .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-soft-purple .sidebar-search-input {
+    background: #2d1b4e !important;
+    color: #e9d5ff !important;
+    border: 1px solid #3b2a5c !important;
+}
+.theme-soft-purple .sidebar-footer {
+    border-color: #2d1b4e !important;
+}
+.theme-soft-purple .sidebar-footer .text-muted {
+    color: #6b5b7b !important;
+}
+.theme-soft-purple .btn-primary {
+    background-color: #a855f7 !important;
+    border-color: #a855f7 !important;
+}
+.theme-soft-purple .btn-primary:hover {
+    background-color: #9333ea !important;
+    border-color: #9333ea !important;
+}
+.theme-soft-purple .text-primary {
+    color: #a855f7 !important;
+}
+
+/* ─── 5. CORAL SUNSET (coral-sunset) ─── */
+.theme-coral-sunset {
+    --theme-sidebar-bg: #2d1418;
+    --theme-sidebar-text: #fecdd3;
+    --theme-sidebar-border: #4c1d2b;
+    --theme-sidebar-active-bg: rgba(251, 113, 133, 0.15);
+    --theme-sidebar-active-text: #fb7185;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #fff5f5;
+    --theme-card-bg: #ffffff;
+    --theme-text: #2d1418;
+    --theme-text-muted: #8b5e67;
+    --theme-primary: #f43f5e;
+    --theme-primary-light: #ffe4e6;
+    --theme-border: #fecdd3;
+}
+.theme-coral-sunset .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-coral-sunset .sidebar .sidebar-title,
+.theme-coral-sunset .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-coral-sunset .sidebar .nav-item {
+    color: #f9a8b4;
+}
+.theme-coral-sunset .sidebar .nav-item:hover {
+    background: rgba(251, 113, 133, 0.1);
+    color: #fb7185;
+}
+.theme-coral-sunset .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-coral-sunset .sidebar .nav-section-title {
+    color: #8b5e67 !important;
+}
+.theme-coral-sunset .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-coral-sunset .sidebar-search-input {
+    background: #4c1d2b !important;
+    color: #fecdd3 !important;
+    border: 1px solid #6b2437 !important;
+}
+.theme-coral-sunset .sidebar-footer {
+    border-color: #4c1d2b !important;
+}
+.theme-coral-sunset .sidebar-footer .text-muted {
+    color: #8b5e67 !important;
+}
+.theme-coral-sunset .btn-primary {
+    background-color: #f43f5e !important;
+    border-color: #f43f5e !important;
+}
+.theme-coral-sunset .btn-primary:hover {
+    background-color: #e11d48 !important;
+    border-color: #e11d48 !important;
+}
+.theme-coral-sunset .text-primary {
+    color: #f43f5e !important;
+}
+
+/* ─── 6. OCEAN TEAL (ocean-teal) ─── */
+.theme-ocean-teal {
+    --theme-sidebar-bg: #042f2e;
+    --theme-sidebar-text: #ccfbf1;
+    --theme-sidebar-border: #0d4f4b;
+    --theme-sidebar-active-bg: rgba(20, 184, 166, 0.15);
+    --theme-sidebar-active-text: #2dd4bf;
+    --theme-navbar-bg: #ffffff;
+    --theme-body-bg: #f0fdfa;
+    --theme-card-bg: #ffffff;
+    --theme-text: #042f2e;
+    --theme-text-muted: #4d7c72;
+    --theme-primary: #14b8a6;
+    --theme-primary-light: #ccfbf1;
+    --theme-border: #99f6e4;
+}
+.theme-ocean-teal .sidebar {
+    background: var(--theme-sidebar-bg) !important;
+    border-color: var(--theme-sidebar-border) !important;
+}
+.theme-ocean-teal .sidebar .sidebar-title,
+.theme-ocean-teal .sidebar .user-name {
+    color: var(--theme-sidebar-text) !important;
+}
+.theme-ocean-teal .sidebar .nav-item {
+    color: #5eead4;
+}
+.theme-ocean-teal .sidebar .nav-item:hover {
+    background: rgba(20, 184, 166, 0.1);
+    color: #2dd4bf;
+}
+.theme-ocean-teal .sidebar .nav-item.active {
+    background: var(--theme-sidebar-active-bg) !important;
+    color: var(--theme-sidebar-active-text) !important;
+}
+.theme-ocean-teal .sidebar .nav-section-title {
+    color: #4d7c72 !important;
+}
+.theme-ocean-teal .main-content {
+    background-color: var(--theme-body-bg) !important;
+}
+.theme-ocean-teal .sidebar-search-input {
+    background: #0d4f4b !important;
+    color: #ccfbf1 !important;
+    border: 1px solid #115e59 !important;
+}
+.theme-ocean-teal .sidebar-footer {
+    border-color: #0d4f4b !important;
+}
+.theme-ocean-teal .sidebar-footer .text-muted {
+    color: #4d7c72 !important;
+}
+.theme-ocean-teal .btn-primary {
+    background-color: #14b8a6 !important;
+    border-color: #14b8a6 !important;
+}
+.theme-ocean-teal .btn-primary:hover {
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
+}
+.theme-ocean-teal .text-primary {
+    color: #14b8a6 !important;
+}
+
+/* ─── Global Theme Transitions ─── */
+body, .sidebar, .main-content, .navbar-top,
+.card, .glass-card, .btn-primary, .form-control,
+.form-select, .dropdown-menu, .bg-white, .bg-light {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Finalizar Compra | PharmaSync')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{marketplace/index :: #mainNav}"></div>
+
+    <main class="container py-5">
+        <div class="row g-5">
+            <!-- Delivery Info -->
+            <div class="col-lg-8 text-dark">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                    <h2 class="fw-900 mb-4"><i class="fas fa-truck text-primary me-3"></i>Datos de Envío</h2>
+                    <form id="checkoutForm" class="row g-4 text-dark">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">Nombres</label>
+                            <input type="text" id="nombreEnvio" class="form-control rounded-3 border-2 bg-light" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted">Apellidos</label>
+                            <input type="text" id="apellidoEnvio" class="form-control rounded-3 border-2 bg-light" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted">Email</label>
+                            <input type="email" id="emailEnvio" class="form-control rounded-3 border-2 bg-light" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold small text-muted">Dirección de Entrega</label>
+                            <input type="text" id="direccionEnvio" class="form-control rounded-3 border-2 bg-light" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small text-muted">Teléfono</label>
+                            <input type="tel" id="telefonoEnvio" class="form-control rounded-3 border-2 bg-light" required>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4 text-dark">
+                <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top bg-white" style="top: 100px;">
+                    <h4 class="fw-bold mb-4 pb-2 border-bottom">Resumen</h4>
+                    
+                    <div id="checkoutSummaryList" class="d-flex flex-column gap-3 mb-4">
+                        <!-- Items injected by JS -->
+                    </div>
+
+                    <div class="mb-4" id="paymentMethodContainer">
+                        <h5 class="fw-bold small text-muted text-uppercase mb-3">Método de Pago</h5>
+                        <div class="row g-2" id="paymentMethods">
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payYape" value="YAPE" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payYape">
+                                    <span class="x-small fw-bold">Yape</span>
+                                </label>
+                            </div>
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payPlin" value="PLIN" autocomplete="off">
+                                <label class="btn btn-outline-info w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payPlin">
+                                    <span class="x-small fw-bold">Plin</span>
+                                </label>
+                            </div>
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payCard" value="TARJETA_CREDITO" autocomplete="off">
+                                <label class="btn btn-outline-dark w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payCard">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span class="x-small fw-bold">T. crédito</span>
+                                </label>
+                            </div>
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payDebit" value="TARJETA_DEBITO" autocomplete="off">
+                                <label class="btn btn-outline-secondary w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payDebit">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span class="x-small fw-bold">T. débito</span>
+                                </label>
+                            </div>
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payEfec" value="EFECTIVO" autocomplete="off">
+                                <label class="btn btn-outline-success w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payEfec">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span class="x-small fw-bold">Efectivo</span>
+                                </label>
+                            </div>
+                            <div class="col-4 col-lg-3">
+                                <input type="radio" class="btn-check" name="metodoPago" id="payTransf" value="TRANSFERENCIA" autocomplete="off">
+                                <label class="btn btn-outline-warning w-100 py-2 rounded-4 d-flex flex-column align-items-center gap-1" for="payTransf">
+                                    <i class="fas fa-university"></i>
+                                    <span class="x-small fw-bold">Transferencia</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Upload Section -->
+                    <div id="prescriptionSection" class="mb-4 p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-4 d-none">
+                        <h6 class="fw-bold text-warning-emphasis"><i class="fas fa-file-prescription me-2"></i>Requiere Receta Médica</h6>
+                        <p class="x-small text-muted mb-0">Esta compra requiere validación de tu receta médica (ya adjuntada). No se cobrará hasta su aprobación.</p>
+                    </div>
+
+                    <div class="bg-light rounded-4 p-4 mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
+                            <span id="subtotalText" class="fw-bold">S/ 0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Envío</span>
+                            <span class="text-success fw-bold">Gratis</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 fw-900 mb-0">TOTAL</span>
+                            <span id="totalText" class="h4 fw-900 text-primary mb-0">S/ 0.00</span>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnPlaceOrder" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg">
+                        Finalizar Pedido <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    
+                    <div class="text-center mt-3 opacity-50 small">
+                        <i class="fas fa-shield-alt me-1"></i> Transacción Protegida por PharmaSync
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:inline="javascript">
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = (arr[0].match(/:(.*?);/) || [, 'application/octet-stream'])[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) u8arr[n] = bstr.charCodeAt(n);
+            return new Blob([u8arr], { type: mime });
+        }
+
+        const cart = JSON.parse(localStorage.getItem('pharmasync_cart') || '[]');
+        const requiresPrescription = cart.some(item => item.receta === true);
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (cart.length === 0) {
+                window.location.href = '/marketplace';
+                return;
+            }
+            
+            if (requiresPrescription) {
+                document.getElementById('prescriptionSection').classList.remove('d-none');
+                document.getElementById('paymentMethodContainer').classList.add('d-none');
+                document.getElementById('btnPlaceOrder').innerHTML = 'Solicitar Validación <i class="fas fa-file-medical ms-2"></i>';
+            }
+
+            renderSummary();
+
+            document.getElementById('btnPlaceOrder').addEventListener('click', async function() {
+                const total = cart.reduce((sum, item) => sum + (item.precio * item.qty), 0);
+                let metodo = "POR_DEFINIR";
+                if (!requiresPrescription) {
+                     metodo = document.querySelector('input[name="metodoPago"]:checked').value;
+                     if (metodo.includes("TARJETA")) {
+                         const { isConfirmed } = await Swal.fire({
+                             title: 'Completar Pago Seguro',
+                             html: `
+                                <div class="text-start">
+                                    <label class="form-label small">Número de Tarjeta</label>
+                                    <input type="text" class="form-control mb-3" placeholder="0000 0000 0000 0000">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label small">Vencimiento</label>
+                                            <input type="text" class="form-control" placeholder="MM/YY">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small">CVV</label>
+                                            <input type="text" class="form-control" placeholder="123">
+                                        </div>
+                                    </div>
+                                </div>
+                             `,
+                             confirmButtonText: '<i class="fas fa-lock"></i> Pagar S/ ' + total.toFixed(2),
+                             showCancelButton: true,
+                             cancelButtonText: 'Cancelar',
+                             customClass: { popup: 'rounded-4' }
+                         });
+                         if (!isConfirmed) return;
+                     }
+                }
+
+                this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+                this.disabled = true;
+
+                const formData = new FormData();
+                formData.append('cartJson', JSON.stringify(cart));
+                formData.append('total', total);
+                formData.append('metodo', metodo);
+                formData.append('nombres', document.getElementById('nombreEnvio').value);
+                formData.append('apellidos', document.getElementById('apellidoEnvio').value);
+                formData.append('email', document.getElementById('emailEnvio').value);
+                formData.append('direccion', document.getElementById('direccionEnvio').value);
+                formData.append('telefono', document.getElementById('telefonoEnvio').value);
+                
+                if (requiresPrescription) {
+                    const itemRec = cart.find(i => i.receta && i.recetaData);
+                    if (itemRec && itemRec.recetaData) {
+                        const blob = dataURLtoBlob(itemRec.recetaData);
+                        const name = itemRec.recetaNombre || 'receta.jpg';
+                        formData.append('receta', blob, name);
+                    }
+                }
+
+                try {
+                    const response = await fetch('/marketplace/checkout/pay', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        Swal.fire({
+                            title: requiresPrescription ? '¡Solicitud Enviada!' : '¡Compra Exitosa!',
+                            text: requiresPrescription 
+                                ? 'Tu pedido está en validación. Te avisaremos cuando sea aprobado para que completes el pago.'
+                                : 'Tu pedido fue procesado correctamente. ¡Gracias por confiar en nosotros!',
+                            icon: 'success',
+                            confirmButtonText: 'Ir a Inicio',
+                            customClass: { popup: 'rounded-4' }
+                        }).then(() => {
+                            localStorage.removeItem('pharmasync_cart');
+                            window.location.href = '/marketplace';
+                        });
+                    } else {
+                        throw new Error(data.error || 'Error desconocido');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    Swal.fire('Error', e.message || 'No se pudo procesar el pedido', 'error');
+                    this.innerHTML = 'Finalizar Pedido <i class="fas fa-arrow-right ms-2"></i>';
+                    this.disabled = false;
+                }
+            });
+        });
+
+        function renderSummary() {
+            const list = document.getElementById('checkoutSummaryList');
+            if (!list) return;
+            let subtotal = 0;
+            
+            list.innerHTML = cart.map(item => {
+                subtotal += (item.precio * item.qty);
+                return `
+                    <div class="d-flex justify-content-between align-items-start gap-2 p-2 bg-light rounded-3">
+                        <div class="small">
+                            <span class="fw-bold d-block text-truncate" style="max-width: 150px;">
+                                ${item.receta ? '<i class="fas fa-file-prescription text-warning me-1"></i>' : ''}${item.nombre}
+                            </span>
+                            <span class="text-muted x-small">${item.qty} unid. x S/ ${item.precio.toFixed(2)}</span>
+                        </div>
+                        <span class="fw-bold small">S/ ${(item.precio * item.qty).toFixed(2)}</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('subtotalText').textContent = `S/ ${subtotal.toFixed(2)}`;
+            document.getElementById('totalText').textContent = `S/ ${subtotal.toFixed(2)}`;
+        }
+    </script>
+    <style>
+        .fw-900 { font-family: 'Readex Pro', sans-serif; font-weight: 800; }
+        .x-small { font-size: 0.7rem; }
+    </style>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

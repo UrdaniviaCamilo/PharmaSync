@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Mi Rendimiento')}">
+</head>
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <!-- Top Navigation -->
+        <div th:replace="~{fragments/navbar-universal :: navbar('Mi Desempeño Personal')}"></div>
+
+        <div class="container-fluid py-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-4 shadow-sm border-0">
+                        <div>
+                            <h2 class="fw-bold mb-1 text-primary"><i class="fas fa-chart-line me-2"></i>Mi Rendimiento Personal</h2>
+                            <p class="text-muted mb-0">Revisa tu productividad diaria y compárala con días anteriores.</p>
+                        </div>
+                        <div class="btn-group">
+                            <a th:href="@{/admin/rendimiento(dias=7)}" class="btn btn-outline-primary" th:classappend="${dias == 7} ? 'active' : ''">Última Semana</a>
+                            <a th:href="@{/admin/rendimiento(dias=30)}" class="btn btn-outline-primary" th:classappend="${dias == 30} ? 'active' : ''">Último Mes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- Summary Cards -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
+                        <div class="card-body">
+                            <div class="bg-primary-subtle text-primary rounded-circle mb-3 mx-auto shadow-sm p-4 text-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-calendar-check fa-2x"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1" th:text="${(personalSales != null ? personalSales.size() : 0) + (personalMoves != null ? personalMoves.size() : 0)}">0</h3>
+                            <p class="text-muted small text-uppercase fw-bold mb-0">Operaciones Totales</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" th:if="${personalSales != null && personalSales.size() > 0}">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
+                        <div class="card-body">
+                            <div class="bg-success-subtle text-success rounded-circle mb-3 mx-auto shadow-sm p-4 text-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-hand-holding-usd fa-2x"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1" th:text="${'S/ ' + (personalSales == null || personalSales.isEmpty() ? '0.00' : personalSales[personalSales.size()-1][2])}">S/ 0.00</h3>
+                            <p class="text-muted small text-uppercase fw-bold mb-0">Monto del Último Período</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
+                        <div class="card-body">
+                            <div class="bg-warning-subtle text-warning rounded-circle mb-3 mx-auto shadow-sm p-4 text-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-trophy fa-2x"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">¡Sigue así!</h3>
+                            <p class="text-muted small text-uppercase fw-bold mb-0">Estado de Meta Diaria</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Daily Statistics Chart -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h5 class="fw-bold mb-0">Evolución de mi Productividad (Ventas/Movimientos)</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <canvas id="personalTrendChart" height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const personalSalesRaw = /*[[${personalSales}]]*/ [];
+            const personalMovesRaw = /*[[${personalMoves}]]*/ [];
+
+            const ctx = document.getElementById('personalTrendChart').getContext('2d');
+            
+            // Combine dates from both datasets
+            const labels = [...new Set([...personalSalesRaw.map(r => r[0]), ...personalMovesRaw.map(r => r[0])])].sort();
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Ventas Realizadas',
+                            data: labels.map(l => {
+                                const found = personalSalesRaw.find(r => r[0] === l);
+                                return found ? found[1] : 0;
+                            }),
+                            borderColor: '#4361ee',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        },
+                        {
+                            label: 'Movimientos Almacén',
+                            data: labels.map(l => {
+                                const found = personalMovesRaw.find(r => r[0] === l);
+                                return found ? found[1] : 0;
+                            }),
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

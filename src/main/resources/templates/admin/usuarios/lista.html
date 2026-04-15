@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión de Equipo')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+    <div th:replace="~{fragments/navbar-universal :: navbar('Equipo de Trabajo')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <div class="container-fluid p-4">
+            
+            <!-- Alerts -->
+            <div th:if="${success}" class="alert alert-success border-0 shadow-sm rounded-pill px-4 mb-3" role="alert">
+                <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger border-0 shadow-sm rounded-pill px-4 mb-3" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
+            </div>
+
+            <!-- Header & Action -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1 h3">Colaboradores & Accesos</h2>
+                    <p class="text-muted mb-0 small">Administra los permisos y cuentas de tu personal.</p>
+                </div>
+                <a th:href="@{/admin/usuarios/nuevo}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                    <i class="fas fa-user-plus me-2"></i>Nuevo Usuario
+                </a>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                <i class="fas fa-users text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 small uppercase fw-bold">Total Personal</h6>
+                                <h3 class="fw-bold mb-0" th:text="${usuarios.size()}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                                <i class="fas fa-user-shield text-info fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 small uppercase fw-bold">Administradores</h6>
+                                <h3 class="fw-bold mb-0" th:text="${totalAdmin}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                <i class="fas fa-user-tie text-success fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-0 small uppercase fw-bold">Empleados</h6>
+                                <h3 class="fw-bold mb-0" th:text="${totalEmp}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters & Table -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 py-3 px-4">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-6">
+                            <div class="input-group bg-light rounded-pill px-3 py-1">
+                                <i class="fas fa-search text-muted mt-2 me-2"></i>
+                                <input type="text" id="userSearch" class="form-control border-0 bg-transparent px-0" placeholder="Buscar por nombre, usuario o email...">
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary active">Todos</button>
+                                <button class="btn btn-outline-secondary">Activos</button>
+                                <button class="btn btn-outline-secondary">Inactivos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="userTable">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3">Colaborador</th>
+                                <th>Contacto / Email</th>
+                                <th>Rol Asignado</th>
+                                <th>Estado</th>
+                                <th class="text-end pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${usuarios}">
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="position-relative">
+                                            <img th:src="${user.fotoPerfil != null ? user.fotoPerfil : 'https://ui-avatars.com/api/?name=' + user.nombres + '&background=random'}" 
+                                                 class="rounded-circle border shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                                            <span class="position-absolute bottom-0 end-0 p-1 border border-white rounded-circle" 
+                                                  th:classappend="${user.activo ? 'bg-success' : 'bg-danger'}" style="width: 12px; height: 12px;"></span>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="mb-0 fw-bold text-dark" th:text="${user.nombres + ' ' + user.apellidos}">Nombre</h6>
+                                            <small class="text-muted fw-medium" th:text="'@' + ${user.username}">Username</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="small fw-bold text-dark" th:text="${user.email}">Email</span>
+                                        <span class="x-small text-muted" th:text="${user.telefono != null ? user.telefono : 'Sin teléfono'}">Tel</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <span th:each="rol : ${user.roles}" 
+                                              class="badge rounded-pill px-3 py-1 border shadow-xs x-small"
+                                              th:classappend="${rol.name() == 'ADMIN' ? 'bg-primary-subtle text-primary border-primary-subtle' : 
+                                                               (rol.name() == 'VENDEDOR' ? 'bg-success-subtle text-success border-success-subtle' : 
+                                                               'bg-info-subtle text-info border-info-subtle')}"
+                                              th:text="${rol}">ROL</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch p-0 d-flex align-items-center gap-2">
+                                        <input class="form-check-input ms-0" type="checkbox" th:checked="${user.activo}" disabled>
+                                        <span class="x-small fw-bold" th:classappend="${user.activo ? 'text-success' : 'text-danger'}" 
+                                              th:text="${user.activo ? 'ACTIVO' : 'INACTIVO'}"></span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a th:href="@{/admin/usuarios/editar/{id}(id=${user.id})}" class="btn btn-sm btn-light border rounded-pill px-3 bg-white hover-shadow transition-all">
+                                            <i class="fas fa-edit text-primary me-1"></i> <span class="small fw-bold">Gestionar</span>
+                                        </a>
+                                        <button class="btn btn-sm btn-light border rounded-circle bg-white hover-danger shadow-xs" 
+                                                th:onclick="'confirmDelete(' + ${user.id} + ')'">
+                                            <i class="fas fa-trash-alt text-danger"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(usuarios)}">
+                                <td colspan="5" class="py-5 text-center text-muted fst-italic">
+                                    <i class="fas fa-user-slash fa-3x mb-3 opacity-25"></i>
+                                    <p class="mb-0">No hay usuarios registrados.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    
+    <script th:inline="javascript">
+        // Real-time search filter
+        document.getElementById('userSearch').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#userTable tbody tr');
+            
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Confirmar eliminación?',
+                text: "El colaborador perderá acceso inmediato al sistema.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: { popup: 'rounded-4 border-0 shadow-lg' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/admin/usuarios/eliminar/' + id;
+                }
+            });
+        }
+    </script>
+    
+    <style>
+        .shadow-xs { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .hover-shadow:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important; transform: translateY(-1px); }
+        .hover-danger:hover { background-color: #fee2e2 !important; border-color: #fca5a5 !important; }
+        .x-small { font-size: 0.7rem; }
+        .ls-1 { letter-spacing: 0.5px; }
+    </style>
+</body>
+</html>

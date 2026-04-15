@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro de Cliente | PharmaSync')}"></head>
+<body class="bg-light">
+
+    <nav th:replace="~{fragments/navbar-universal :: navbar('Registro de Cliente')}"></nav>
+
+    <div class="container py-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-5 d-none d-md-block bg-primary p-5 text-white d-flex align-items-center">
+                            <div>
+                                <i class="fas fa-user-plus fa-4x mb-4"></i>
+                                <h2 class="fw-bold fs-1">¡Bienvenido!</h2>
+                                <p class="lead opacity-75">Crea tu cuenta para comprar medicamentos, subir tus recetas y rastrear tus pedidos en tiempo real.</p>
+                                <ul class="list-unstyled small mt-4">
+                                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Compra Segura</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Gestión de Recetas</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Historial de Ventas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-7 p-4 p-md-5 bg-white">
+                            <form th:action="@{/registro-cliente}" th:object="${usuario}" method="post">
+                                <h3 class="fw-bold mb-4">Crea tu Cuenta</h3>
+                                
+                                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Usuario</label>
+                                    <input type="text" th:field="*{username}" class="form-control" required placeholder="ej: juanperez123">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">E-mail</label>
+                                    <input type="email" th:field="*{email}" class="form-control" required placeholder="tu@correo.com">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Contraseña</label>
+                                    <input type="password" th:field="*{password}" class="form-control" required>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">Nombres</label>
+                                        <input type="text" th:field="*{nombres}" class="form-control" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">Apellidos</label>
+                                        <input type="text" th:field="*{apellidos}" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                                    REGISTRARME AHORA <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </form>
+                            <div class="text-center mt-4">
+                                <span class="text-muted small">¿Ya tienes cuenta? <a href="/login" class="fw-bold text-primary text-decoration-none">Inicia sesión aquí</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

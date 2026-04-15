@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Configuración de Cliente')}"></head>
+<body class="bg-light">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+<main class="main-content">
+    <!-- Navbar Superior -->
+    <nav class="navbar-top shadow-sm px-4 py-2 bg-white d-flex align-items-center justify-content-between position-fixed top-0 end-0 border-bottom" 
+         style="left: var(--sidebar-width); z-index: 1040; transition: var(--transition);">
+        <div class="navbar-left d-flex align-items-center">
+            <a th:href="@{/admin/clientes}" class="btn btn-light rounded-circle me-3 shadow-sm border border-secondary border-opacity-10">
+                <i class="fas fa-arrow-left text-primary"></i>
+            </a>
+            <h1 class="page-title h4 fw-bold mb-0" th:text="${cliente.id == null ? 'Nuevo Registro' : 'Editar Cliente'}">Configuración</h1>
+        </div>
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <span class="badge bg-primary-subtle text-primary border px-3 py-2 rounded-pill" th:if="${cliente.id != null}" th:text="'ID: #' + ${cliente.id}">#123</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-4 mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                    <div class="card-header bg-primary text-white p-4 position-relative">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-white bg-opacity-20 p-3 rounded-circle">
+                                <i class="fas fa-user-edit fs-3"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-1">Información de Cliente</h4>
+                                <p class="mb-0 opacity-75 small">Manten los datos actualizados para una mejor atención.</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-user-circle position-absolute me-4 end-0 opacity-10 fa-5x rotate-15" style="top: 20px;"></i>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form th:action="@{/admin/clientes/guardar}" th:object="${cliente}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{empresaId}">
+                            
+                            <div class="row g-4 mb-5">
+                                <div class="col-12 mb-2">
+                                    <h5 class="fw-bold text-dark border-start border-primary border-4 ps-3">Datos Identificativos</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Nombres <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{nombres}" class="form-control rounded-3 border bg-light h-auto py-2" placeholder="Ej: Juan" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Apellidos <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{apellidos}" class="form-control rounded-3 border bg-light h-auto py-2" placeholder="Ej: Pérez" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">DNI / Documento <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{dni}" class="form-control rounded-3 border bg-light h-auto py-2 font-monospace" placeholder="00000000" maxlength="8" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Fecha Nacimiento</label>
+                                    <input type="date" th:field="*{fechaNacimiento}" class="form-control rounded-3 border bg-light h-auto py-2 text-muted">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <div class="form-check form-switch mt-3 mt-md-4">
+                                        <input class="form-check-input" type="checkbox" th:field="*{activo}" id="activoCheck">
+                                        <label class="form-check-label fw-bold small text-muted text-uppercase ms-2" for="activoCheck">Estado Activo</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-5">
+                                <div class="col-12 mb-2">
+                                    <h5 class="fw-bold text-dark border-start border-primary border-4 ps-3">Contacto y Ubicación</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Teléfono / WhatsApp</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 border"><i class="fas fa-phone-alt text-muted fs-6"></i></span>
+                                        <input type="text" th:field="*{telefono}" class="form-control rounded-3 border-start-0 bg-light py-2" placeholder="999 999 999">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 border"><i class="fas fa-envelope text-muted fs-6"></i></span>
+                                        <input type="email" th:field="*{email}" class="form-control rounded-3 border-start-0 bg-light py-2" placeholder="ejemplo@correo.com">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Dirección</label>
+                                    <textarea th:field="*{direccion}" class="form-control rounded-3 border bg-light py-2 text-muted" rows="2" placeholder="Dirección completa del cliente..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                                <a th:href="@{/admin/clientes}" class="btn btn-light rounded-pill px-4 fw-bold border">
+                                    <i class="fas fa-arrow-left me-2"></i>Regresar
+                                </a>
+                                <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                                    <i class="fas fa-save me-2"></i>Guardar Cliente
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<style>
+    .navbar-top { height: 75px; transition: var(--transition); z-index: 1040; }
+    .rotate-15 { transform: rotate(15deg); }
+    .font-monospace { font-family: 'JetBrains Mono', 'Courier New', monospace; letter-spacing: 1px; }
+</style>
+
+</body>
+</html>

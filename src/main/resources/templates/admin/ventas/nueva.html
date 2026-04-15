@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Nueva Venta')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <div th:replace="~{fragments/navbar-universal :: navbar('Nueva Venta (POS)')}"></div>
+
+    <main class="main-content mt-5 pt-4">
+        <div class="container-fluid p-4">
+            <form th:action="@{/admin/ventas/guardar}" th:object="${venta}" method="post" id="ventaForm" enctype="multipart/form-data">
+                <div class="row g-4">
+                    
+                    <!-- Left Column: POS Table -->
+                    <div class="col-lg-8">
+                        
+                        <!-- Product Search Area -->
+                        <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+                            <div class="card-body p-0">
+                                <div class="position-relative">
+                                    <div class="bg-primary p-3 bg-opacity-10 rounded-top-4 border-bottom border-primary border-opacity-10 px-4">
+                                         <h6 class="mb-0 fw-bold text-primary"><i class="fas fa-barcode me-2"></i>Escanear o Buscar Producto</h6>
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="position-relative">
+                                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted fs-5"></i>
+                                            <input type="text" id="productSearch" class="form-control form-control-lg ps-5 border bg-light rounded-pill border-0" 
+                                                   placeholder="Escribe el nombre del medicamento o laboratorio..." autocomplete="off">
+                                            <!-- Search Results Dropdown -->
+                                            <div id="searchResults" class="dropdown-menu w-100 shadow-lg border-0 rounded-4 mt-2 py-0 overflow-hidden" 
+                                                 style="display: none; max-height: 300px; overflow-y: auto; z-index: 1050;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Area -->
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100" style="min-height: 400px;">
+                           <div class="card-header bg-white border-bottom p-4 pb-3">
+                                <h5 class="mb-0 fw-bold"><i class="fas fa-shopping-cart text-muted me-2"></i>Carrito de Compras</h5>
+                           </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="ps-4 py-3 border-0 text-muted small text-uppercase fw-bold">Producto</th>
+                                            <th class="text-center py-3 border-0 text-muted small text-uppercase fw-bold" style="width: 140px;">Cant.</th>
+                                            <th class="text-end py-3 border-0 text-muted small text-uppercase fw-bold">Precio Unit.</th>
+                                            <th class="text-end py-3 border-0 text-muted small text-uppercase fw-bold">Importe</th>
+                                            <th class="text-end pe-4 py-3 border-0"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartBody">
+                                        <tr id="emptyCartRow">
+                                            <td colspan="5" class="text-center py-5 text-muted">
+                                                <i class="fas fa-box-open fa-3x mb-3 text-light"></i>
+                                                <h6 class="fw-bold mb-1">Tu carrito está vacío</h6>
+                                                <small>Busca productos en la barra superior para comenzar a añadir.</small>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Checkout Data -->
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 2rem;">
+                            <h5 class="fw-bold mb-4 pb-3 border-bottom d-flex align-items-center">
+                                <i class="fas fa-cash-register text-primary bg-primary bg-opacity-10 p-2 rounded-circle me-3"></i>
+                                Resumen de Pago
+                            </h5>
+                            
+                            <!-- Venta Number (Subtle) -->
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted mb-1">Nº Comprobante</label>
+                                <input type="text" th:field="*{numeroVenta}" class="form-control form-control-sm bg-light border-0 fw-bold" th:readonly="${esEdicion}" placeholder="Generado Automáticamente">
+                            </div>
+
+                            <!-- Client selection (Unified checkout) -->
+                            <div class="mb-4 p-3 bg-light rounded-4 border border-1 shadow-sm">
+                                <label class="form-label fw-bold mb-2 text-dark"><i class="fas fa-user-circle text-primary me-2"></i>Cliente <span class="text-danger">*</span></label>
+                                <select name="cliente.id" class="form-select border-0 bg-white shadow-sm rounded-3">
+                                    <option value="" selected>👤 Cliente Genérico</option>
+                                    <option th:each="clie : ${clientes}" th:value="${clie.id}" th:text="${clie.nombres} + ' ' + ${clie.apellidos} + ' (' + (${clie.dni != null ? clie.dni : '-'}) + ')'"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-600 mb-2">Método de Pago <span class="text-danger">*</span></label>
+                                <select th:field="*{metodoPago}" class="form-select bg-light border-0 py-2 shadow-sm" required>
+                                    <option value="EFECTIVO">Efectivo</option>
+                                    <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+                                    <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
+                                    <option value="YAPE">Yape</option>
+                                    <option value="PLIN">Plin</option>
+                                    <option value="TRANSFERENCIA">Transferencia</option>
+                                </select>
+                            </div>
+
+                            <!-- Prescription Status Badge -->
+                            <div id="prescriptionBadge" class="d-none mb-4 p-3 rounded-4 border transition-all shadow-sm bg-light border-warning">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-exclamation-triangle text-warning fs-4 me-2"></i>
+                                    <h6 class="mb-0 fw-bold text-dark">Medicamento Controlado</h6>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input fs-5" type="checkbox" role="switch" id="recetaValidadaManual" name="recetaValidadaManual">
+                                    <label class="form-check-label ms-2 pt-1 small fw-bold text-muted" for="recetaValidadaManual">
+                                        Confirmo que el paciente ha presentado una receta física/digital válida.
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Totals Box -->
+                            <div class="bg-dark rounded-4 p-4 mb-4 text-white shadow">
+                                <div class="d-flex justify-content-between mb-2 opacity-75">
+                                    <span class="small fw-bold">SUBTOTAL</span>
+                                    <span class="fw-bold" id="subtotalDisplay">S/ 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-light border-opacity-25 opacity-75">
+                                    <span class="small fw-bold">IGV (18%)</span>
+                                    <span class="fw-bold" id="igvDisplay">S/ 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 fw-bold text-uppercase text-light">TOTAL</h5>
+                                    <h2 class="mb-0 fw-bold text-warning" id="totalDisplay">S/ 0.00</h2>
+                                </div>
+                            </div>
+
+                            <!-- Observations -->
+                            <div class="mb-4">
+                                <a class="text-decoration-none small text-muted fw-bold d-block text-center border p-2 rounded-pill hover-bg-light" style="border-style: dashed !important;" data-bs-toggle="collapse" href="#collapseObs" role="button">
+                                    <i class="fas fa-plus ms-1"></i> Añadir Nota Interna
+                                </a>
+                                <div class="collapse mt-2" id="collapseObs">
+                                    <textarea th:field="*{observaciones}" class="form-control bg-light border-0 shadow-sm rounded-4" rows="3" placeholder="Opcional..."></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg text-uppercase border-0" id="btnFinalizarVenta" style="letter-spacing: 1px;" disabled>
+                                Confirmar Venta <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden file input for Prescription upload -->
+                <input type="file" id="recetaFileInput" name="recetaFile" accept=".pdf,image/png,image/jpeg" class="d-none">
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    
+    <script th:inline="javascript">
+        // Dynamic POS Logic
+        let cart = [];
+        let hasControlledSubstances = false;
+        let isPrescriptionFileAttached = false;
+        
+        const productSearch = document.getElementById('productSearch');
+        const searchResults = document.getElementById('searchResults');
+        const cartBody = document.getElementById('cartBody');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const subtotalDisplay = document.getElementById('subtotalDisplay');
+        const igvDisplay = document.getElementById('igvDisplay');
+        const btnFinalizarVenta = document.getElementById('btnFinalizarVenta');
+        const recetaCheck = document.getElementById('recetaValidadaManual');
+        const prescriptionBadge = document.getElementById('prescriptionBadge');
+
+        // Initial cart if editing
+        /*[# th:if="${esEdicion}"]*/
+        const initialDetails = /*[[${venta.detalles}]]*/ [];
+        initialDetails.forEach(d => {
+            cart.push({
+                id: d.producto.id,
+                nombre: d.producto.nombre,
+                laboratorio: d.producto.laboratorio,
+                precioVenta: d.precioUnitario,
+                stock: 999, // Hack for edit mode
+                requiereReceta: d.producto.requiereReceta,
+                cantidad: d.cantidad
+            });
+        });
+        renderCart();
+        /*[/]*/
+
+        // Search logic via API
+        productSearch.addEventListener('input', async function() {
+            const query = this.value.toLowerCase().trim();
+            if (query.length < 3) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/productos/api/buscar?q=${encodeURIComponent(query)}`);
+                const filtered = await response.json();
+
+                if (filtered.length > 0) {
+                    searchResults.innerHTML = '';
+                    filtered.forEach(p => {
+                        const item = document.createElement('a');
+                        item.className = 'dropdown-item p-3 border-bottom d-flex justify-content-between align-items-center';
+                        item.href = 'javascript:void(0)';
+                        item.innerHTML = `
+                            <div>
+                                <h6 class="mb-0 fw-bold">${p.nombre}</h6>
+                                <small class="text-muted">${p.laboratorio} - Stock: ${p.stock}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="text-primary fw-bold">S/ ${p.precio.toFixed(2)}</span>
+                            </div>
+                        `;
+                        item.onclick = () => {
+                            addToCart({
+                                id: p.id,
+                                nombre: p.nombre,
+                                laboratorio: p.laboratorio,
+                                precioVenta: p.precio,
+                                stock: p.stock,
+                                requiereReceta: p.requiereReceta
+                            });
+                            productSearch.value = '';
+                            searchResults.style.display = 'none';
+                        };
+                        searchResults.appendChild(item);
+                    });
+                    searchResults.style.display = 'block';
+                } else {
+                    searchResults.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error searching products:", error);
+            }
+        });
+
+        if(recetaCheck) {
+            recetaCheck.addEventListener('change', validateSale);
+        }
+
+        function addToCart(product) {
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                if (existing.cantidad < product.stock) {
+                    existing.cantidad++;
+                } else {
+                    Swal.fire({ title: 'Stock Insuficiente', icon: 'warning', customClass: { popup: 'rounded-4' } });
+                }
+            } else {
+                if (product.stock > 0) {
+                    cart.push({ ...product, cantidad: 1 });
+                } else {
+                    Swal.fire({ title: 'Sin Stock', icon: 'error', customClass: { popup: 'rounded-4' } });
+                }
+            }
+            renderCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                const newQty = item.cantidad + change;
+                if (newQty > 0 && newQty <= item.stock) {
+                    item.cantidad = newQty;
+                } else if (newQty > item.stock) {
+                    Swal.fire({ title: 'Stock Insuficiente', icon: 'warning', customClass: { popup: 'rounded-4' } });
+                }
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            if (cart.length === 0) {
+                cartBody.innerHTML = `<tr id="emptyCartRow"><td colspan="5" class="text-center py-5 text-muted small">Agrega productos para iniciar la venta.</td></tr>`;
+            } else {
+                cartBody.innerHTML = '';
+                cart.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="ps-3">
+                            <input type="hidden" name="detalles[${index}].producto.id" value="${item.id}">
+                            <input type="hidden" name="detalles[${index}].cantidad" value="${item.cantidad}">
+                            <div class="fw-bold">${item.nombre}</div>
+                            <small class="text-muted">${item.laboratorio} | <span class="text-primary fw-bold">Stock: ${item.stock}</span></small>
+                            ${item.requiereReceta ? '<br><span class="badge bg-warning text-dark mt-1"><i class="fas fa-file-prescription me-1"></i>Requiere Receta</span>' : ''}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm rounded-pill overflow-hidden border">
+                                <button type="button" class="btn btn-light px-2" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <span class="px-3 py-1 bg-white fs-6 fw-bold">${item.cantidad}</span>
+                                <button type="button" class="btn btn-light px-2" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td class="text-end fw-bold">S/ ${item.precioVenta.toFixed(2)}</td>
+                        <td class="text-end fw-bold text-primary">S/ ${(item.precioVenta * item.cantidad).toFixed(2)}</td>
+                        <td class="text-end pe-3">
+                            <button type="button" class="btn btn-outline-danger btn-sm rounded-circle p-1 px-2" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    cartBody.appendChild(row);
+                });
+            }
+
+            // Totals and Recipe Logic
+            hasControlledSubstances = cart.some(item => item.requiereReceta);
+            if (hasControlledSubstances) {
+                prescriptionBadge.classList.remove('d-none');
+            } else {
+                prescriptionBadge.classList.add('d-none');
+                if(recetaCheck) recetaCheck.checked = false;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.precioVenta * item.cantidad), 0);
+            const subtotal = total / 1.18;
+            const igv = total - subtotal;
+
+            totalDisplay.textContent = `S/ ${total.toFixed(2)}`;
+            subtotalDisplay.textContent = `S/ ${subtotal.toFixed(2)}`;
+            igvDisplay.textContent = `S/ ${igv.toFixed(2)}`;
+            
+            validateSale();
+        }
+
+        function validateSale() {
+            const clienteSelect = document.querySelector('select[name="cliente.id"]');
+            const isClienteGeneral = clienteSelect.value === "";
+            
+            let isValid = cart.length > 0;
+            
+            // Logic: Cliente General cannot buy prescription drugs
+            if (isClienteGeneral && hasControlledSubstances) {
+                isValid = false;
+                if (prescriptionBadge) {
+                    prescriptionBadge.classList.replace('bg-light', 'bg-danger');
+                    prescriptionBadge.classList.replace('border-warning', 'border-danger');
+                    predictionWarningHTML = `<div class="text-white mt-2 small fw-bold"><i class="fas fa-ban me-1"></i> Cliente General no puede comprar controlados. Por favor seleccione un cliente.</div>`;
+                    let w = document.getElementById('genError');
+                    if(!w) {
+                        prescriptionBadge.insertAdjacentHTML('beforeend', `<div id="genError">${predictionWarningHTML}</div>`);
+                    }
+                    if(recetaCheck) recetaCheck.disabled = true;
+                }
+            } else {
+                if (prescriptionBadge) {
+                    prescriptionBadge.classList.replace('bg-danger', 'bg-light');
+                    prescriptionBadge.classList.replace('border-danger', 'border-warning');
+                    let w = document.getElementById('genError');
+                    if(w) w.remove();
+                    if(recetaCheck) recetaCheck.disabled = false;
+                }
+                
+                if (hasControlledSubstances && recetaCheck && !recetaCheck.checked) {
+                    isValid = false;
+                }
+            }
+            
+            btnFinalizarVenta.disabled = !isValid;
+        }
+
+        // Add event listener to client select
+        document.querySelector('select[name="cliente.id"]').addEventListener('change', validateSale);
+
+        document.addEventListener('click', function(e) {
+            if (!productSearch.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro de Empresa')}"></head>
+<body class="bg-register">
+
+    <!-- Minimal Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 position-absolute w-100 top-0">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <div class="brand-icon me-2 rounded-3 p-2 bg-primary text-white shadow-sm">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                </div>
+                <span class="fw-bold text-dark h4 mb-0">PharmaSync</span>
+            </a>
+            <div class="ms-auto">
+                <a th:href="@{/login}" class="text-primary fw-bold text-decoration-none small hover-underline">¿Ya tienes cuenta? Inicia Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="register-container d-flex align-items-center justify-content-center py-5 mt-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="glass-card shadow-2xl rounded-5 overflow-hidden border-0 bg-white bg-opacity-95 position-relative">
+                        
+                        <div class="row g-0">
+                            <!-- Left: Content & Steps -->
+                            <div class="col-lg-4 d-none d-lg-block p-5 text-white position-relative" 
+                                 style="background: linear-gradient(rgba(67, 97, 238, 0.95), rgba(58, 12, 163, 0.95)), url('/images/auth-bg.png'); background-size: cover; background-position: center;">
+                                <div class="sidebar-circles position-absolute top-0 start-0 w-100 h-100 overflow-hidden opacity-10">
+                                    <div class="circle c-1"></div>
+                                    <div class="circle c-2"></div>
+                                </div>
+                                
+                                <div class="position-relative z-2">
+                                    <h3 class="fw-900 mb-5 lh-1">Empieza tu Viaje Digital</h3>
+                                    
+                                    <div class="step-list d-flex flex-column gap-5">
+                                        <div class="step-item d-flex align-items-start gap-3 active">
+                                            <div class="step-number bg-primary rounded-pill p-2 fw-bold small">01</div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1">Empresa</h6>
+                                                <p class="x-small opacity-50 mb-0">Identidad fiscal y ubicación.</p>
+                                            </div>
+                                        </div>
+                                        <div class="step-item d-flex align-items-start gap-3">
+                                            <div class="step-number border border-white border-opacity-25 rounded-pill p-2 fw-bold small">02</div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1">Administrador</h6>
+                                                <p class="x-small opacity-50 mb-0">Acceso principal al sistema.</p>
+                                            </div>
+                                        </div>
+                                        <div class="step-item d-flex align-items-start gap-3">
+                                            <div class="step-number border border-white border-opacity-25 rounded-pill p-2 fw-bold small">03</div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1">Listos</h6>
+                                                <p class="x-small opacity-50 mb-0">Configuración final automática.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-5 p-4 bg-primary bg-opacity-10 rounded-4 border border-primary border-opacity-20 d-flex gap-3">
+                                        <i class="fas fa-shield-alt text-primary fs-4 mt-1"></i>
+                                        <div>
+                                            <p class="fw-bold mb-1 x-small lh-1 text-primary">Seguridad Garantizada</p>
+                                            <p class="x-small opacity-75 mb-0 lh-base">Tus datos están protegidos bajo estándares internacionales.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right: Form -->
+                            <div class="col-lg-8 p-4 p-md-5">
+                                <div class="form-header mb-5">
+                                    <h2 class="fw-900 text-dark mb-1">Registrar Farmacia</h2>
+                                    <p class="text-muted small">Crea tu identidad corporativa y tu cuenta de administrador en un solo paso.</p>
+                                    
+                                    <div th:if="${error}" class="alert alert-danger border-0 rounded-4 px-4 py-3 mt-3 small shadow-xs" role="alert">
+                                        <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${error}"></span>
+                                    </div>
+                                </div>
+
+                                <form th:action="@{/registro-empresa}" method="post" id="registroForm" class="registration-form">
+                                    <!-- Section 1 -->
+                                    <div class="form-section mb-5">
+                                        <h6 class="text-primary fw-bold small text-uppercase ls-1 mb-4 d-flex align-items-center">
+                                            <i class="fas fa-building me-2"></i> DATOS DE LA EMPRESA
+                                        </h6>
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">RUC (11 dígitos)</label>
+                                                <div class="input-group">
+                                                    <div class="input-modern position-relative flex-grow-1">
+                                                        <i class="fas fa-id-card position-absolute top-50 start-0 translate-middle-y ms-3 text-muted opacity-50"></i>
+                                                        <input type="text" id="rucInput" name="ruc" class="form-control" placeholder="20XXXXXXXXX" required maxlength="11">
+                                                    </div>
+                                                    <button type="button" id="btnConsultarRuc" class="btn btn-outline-primary rounded-end-3 px-3 shadow-sm">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Nombre Comercial</label>
+                                                <input type="text" name="nombreComercial" class="form-control" placeholder="Farmacia Ejemplo" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Razón Social</label>
+                                                <input type="text" name="razonSocial" class="form-control" placeholder="RAZÓN SOCIAL S.A.C.">
+                                            </div>
+                                            
+                                            <!-- Ubigeo -->
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Departamento</label>
+                                                <select name="departamento" id="departamento" class="form-select" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Provincia</label>
+                                                <select name="provincia" id="provincia" class="form-select" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Distrito</label>
+                                                <select name="distrito" id="distrito" class="form-select" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-12">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Dirección Fiscal</label>
+                                                <input type="text" name="direccion" class="form-control" placeholder="Av. Principal 123" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Section 2 -->
+                                    <div class="form-section mb-5">
+                                        <h6 class="text-primary fw-bold small text-uppercase ls-1 mb-4 d-flex align-items-center">
+                                            <i class="fas fa-user-shield me-2"></i> ADMINISTRADOR PRINCIPAL
+                                        </h6>
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Nombre de Usuario</label>
+                                                <input type="text" name="username" class="form-control" placeholder="admin_user" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Contraseña</label>
+                                                <div class="position-relative">
+                                                    <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" minlength="6" required>
+                                                    <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 text-muted opacity-50 z-3 border-0 bg-transparent" type="button" id="togglePassword">
+                                                        <i class="fas fa-eye" id="eyeIcon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Nombres</label>
+                                                <input type="text" name="nombres" class="form-control" placeholder="Nombres" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold x-small text-muted text-uppercase">Apellidos</label>
+                                                <input type="text" name="apellidos" class="form-control" placeholder="Apellidos" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 pt-4 border-top">
+                                        <div class="form-check">
+                                            <input class="form-check-input border-2" type="checkbox" id="termsCheck" required>
+                                            <label class="form-check-label x-small text-muted fw-bold" for="termsCheck">
+                                                Acepto los <a href="#" class="text-primary text-decoration-none">Términos de Servicio</a>
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-lg hover-up transition-all">
+                                            Finalizar y Crear Sistema <i class="fas fa-check-circle ms-2"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <p class="x-small text-muted mb-0 opacity-50">&copy; 2026 PharmaSync Software en la Nube. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: url('/images/auth-bg.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .bg-register { 
+            background: rgba(238, 242, 255, 0.5);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+        }
+        .fw-900 { font-family: 'Readex Pro', sans-serif; font-weight: 800; }
+        .ls-1 { letter-spacing: 1px; }
+        .x-small { font-size: 0.7rem; }
+        
+        .shadow-2xl { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.1); }
+        .glass-card { border: 1px solid rgba(255,255,255,0.7); backdrop-filter: blur(20px); }
+
+        .step-number { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .step-item.active .step-number { transform: scale(1.1); box-shadow: 0 0 15px rgba(67, 97, 238, 0.4); }
+
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            background-color: #f8fafc;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+            border-radius: 0.75rem;
+            transition: 0.3s;
+        }
+        .form-control:focus, .form-select:focus { background-color: #fff; border-color: var(--primary); box-shadow: none; }
+        
+        .input-modern input { padding-left: 2.8rem; }
+
+        .circle { position: absolute; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 50px rgba(255,255,255,0.2); }
+        .c-1 { width: 200px; height: 200px; top: -50px; right: -50px; }
+        .c-2 { width: 300px; height: 300px; bottom: -100px; left: -50px; }
+
+        .hover-up:hover { transform: translateY(-3px); }
+        .transition-all { transition: 0.4s ease; }
+    </style>
+
+    <!-- Peru Ubigeo Script -->
+    <script src="/js/peru-ubigeo.js"></script>
+
+    <script th:inline="javascript">
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.classList.toggle('fa-eye');
+            eyeIcon.classList.toggle('fa-eye-slash');
+        });
+
+        document.getElementById('btnConsultarRuc').addEventListener('click', async function() {
+            const ruc = document.getElementById('rucInput').value;
+            if (ruc.length !== 11) {
+                Swal.fire('Error', 'El RUC debe tener 11 dígitos', 'error');
+                return;
+            }
+
+            const btn = this;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`/api/ruc?numero=${ruc}`);
+                const data = await response.json();
+
+                if (data && data.razonSocial) {
+                    document.getElementsByName('nombreComercial')[0].value = data.nombreComercial || data.razonSocial;
+                    document.getElementsByName('razonSocial')[0].value = data.razonSocial;
+                    document.getElementsByName('direccion')[0].value = data.direccion || '';
+                    
+                    // Display success
+                    Swal.fire({
+                        title: 'Datos Encontrados',
+                        text: data.razonSocial,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire('No encontrado', 'No se pudieron obtener datos para este RUC', 'warning');
+                }
+            } catch (error) {
+                console.error("Error consultando RUC:", error);
+                Swal.fire('Error', 'No se pudo conectar con el servicio de SUNAT', 'error');
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        });
+    </script>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

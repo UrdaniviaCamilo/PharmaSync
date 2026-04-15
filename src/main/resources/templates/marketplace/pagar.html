@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Completar pago | PharmaSync')}"></head>
+<body class="bg-light text-dark">
+
+    <div th:replace="~{marketplace/index :: #mainNav}"></div>
+
+    <main class="container py-5">
+        <div class="mb-4">
+            <a th:href="@{/marketplace}" class="btn btn-light border rounded-pill px-4"><i class="fas fa-arrow-left me-2"></i>Volver al Marketplace</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h2 class="fw-bold mb-2">Completar pago</h2>
+                    <p class="text-muted small mb-4">Tu receta fue aprobada. Elige un método de pago y confirma para registrar tu compra.</p>
+
+                    <div class="alert alert-light border rounded-4 small mb-4">
+                        <div class="d-flex justify-content-between"><span class="text-muted">Pedido</span><span class="fw-bold" th:text="${venta.numeroVenta}">MP-XXX</span></div>
+                        <div class="d-flex justify-content-between mt-1"><span class="text-muted">Total</span><span class="fw-bold text-primary">S/ <span th:text="${#numbers.formatDecimal(venta.total, 1, 2)}">0</span></span></div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3">Productos</h6>
+                    <ul class="list-group list-group-flush border rounded-3 mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3"
+                            th:each="d : ${venta.detalles}">
+                            <div>
+                                <span class="fw-medium" th:text="${d.producto.nombre}">Prod</span>
+                                <span class="text-muted small ms-2" th:text="'x' + ${d.cantidad}">x1</span>
+                            </div>
+                            <span class="fw-bold">S/ <span th:text="${#numbers.formatDecimal(d.subtotal, 1, 2)}">0</span></span>
+                        </li>
+                    </ul>
+
+                    <form th:action="@{/marketplace/checkout/pagar/{id}/confirmar(id=${venta.id})}" method="post" id="formPago">
+                        <h6 class="fw-bold mb-3">Método de pago</h6>
+                        <div class="row g-2 mb-4">
+                            <div class="col-6 col-md-4" th:each="m, ms : ${metodos}">
+                                <input type="radio" class="btn-check" name="metodo" th:id="${'paym_' + ms.index}" th:value="${m.name()}" autocomplete="off" th:checked="${m.name() == 'YAPE'}">
+                                <label class="btn btn-outline-primary w-100 py-2 rounded-3 small fw-bold" th:for="${'paym_' + ms.index}" th:text="${m.displayName}">Método</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
+                            Confirmar pago <i class="fas fa-check ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-warning bg-opacity-10" th:if="${venta.recetaPath != null}">
+                    <h6 class="fw-bold"><i class="fas fa-file-prescription me-2"></i>Receta adjunta</h6>
+                    <a th:href="${venta.recetaPath}" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill mt-2">Ver archivo</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:if="${error}" class="position-fixed bottom-0 end-0 p-4" style="z-index: 1080;">
+        <div class="alert alert-danger shadow rounded-4 mb-0" th:text="${error}">Error</div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Categorías de Productos')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-admin :: sidebar}"></div>
+
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-white bg-white border-bottom shadow-sm sticky-top px-4 py-3">
+            <div class="container-fluid">
+                <h4 class="mb-0 fw-bold">Gestión de Categorías</h4>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <div class="row g-4">
+                <!-- Category List -->
+                <div class="col-lg-8">
+                    <div class="glass-card p-4 bg-white border-0 shadow-sm rounded-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Listado de Categorías</h5>
+                            <span class="badge bg-primary rounded-pill px-3 py-2" th:text="${categorias.size()} + ' Registradas'">0 Registradas</span>
+                        </div>
+
+                        <!-- Alerts -->
+                        <div th:if="${success}" class="alert alert-success border-0 shadow-sm rounded-pill px-4 mb-4" role="alert">
+                            <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger border-0 shadow-sm rounded-pill px-4 mb-4" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="cat : ${categorias}">
+                                        <td class="ps-4 text-muted small" th:text="'#' + ${cat.id}"></td>
+                                        <td class="fw-bold" th:text="${cat.nombre}">Nombre</td>
+                                        <td class="text-muted" th:text="${cat.descripcion}">Descripción</td>
+                                        <td class="text-end pe-4">
+                                            <div class="dropdown">
+                                                <button class="btn btn-light rounded-circle p-2" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v px-1"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+                                                    <li><a class="dropdown-item py-2 rounded text-danger" href="javascript:void(0)" th:onclick="'confirmDelete(' + ${cat.id} + ')'"><i class="fas fa-trash me-2"></i> Eliminar</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(categorias)}">
+                                        <td colspan="4" class="text-center py-5 text-muted">No hay categorías registradas.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 bg-white border-0 shadow-sm rounded-4 sticky-top" style="top: 100px; z-index: 1;">
+                        <h5 class="fw-bold mb-4"><i class="fas fa-plus-circle text-primary me-2"></i>Nueva Categoría</h5>
+                        <form th:action="@{/admin/categorias/guardar}" th:object="${categoria}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <div class="mb-3">
+                                <label class="form-label fw-600">Nombre de la Categoría <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{nombre}" class="form-control bg-light border-0 py-2" placeholder="Ej: Analgésicos" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-600">Descripción</label>
+                                <textarea th:field="*{descripcion}" class="form-control bg-light border-0 py-2" rows="3" placeholder="Opcional..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                                <i class="fas fa-save me-2"></i>Guardar Categoría
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Eliminar categoría?',
+                text: "Solo puedes eliminar categorías si no tienen productos asociados.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0d6efd',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/admin/categorias/eliminar/' + id;
+                }
+            })
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Gestión de Usuario')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+    <div th:replace="~{fragments/navbar-admin :: navbar('Gestionar Personal')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <div class="container py-4">
+            
+            <!-- Breadcrumb & Back -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb bg-transparent p-0 mb-2">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/usuarios}" class="text-muted text-decoration-none small">Lista de Usuarios</a></li>
+                    <li class="breadcrumb-item active small" aria-current="page" th:text="${modo == 'crear' ? 'Nuevo Equipo' : 'Editar Colaborador'}">---</li>
+                </ol>
+                <div class="d-flex align-items-center">
+                    <a th:href="@{/admin/usuarios}" class="btn btn-light rounded-circle p-2 me-3 shadow-xs">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h2 class="fw-bold mb-0 h3" th:text="${modo == 'crear' ? 'Registrar Nuevo Miembro' : 'Actualizar Información'}">---</h2>
+                </div>
+            </nav>
+
+            <form th:action="@{/admin/usuarios/guardar}" method="post" id="userForm">
+                <!-- ID oculto: vacío para crear, valor para editar -->
+                <input type="hidden" name="id" th:value="${usuario.id}">
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <!-- Main Form Card -->
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                            <div class="card-header bg-primary text-white py-3 px-4">
+                                <h6 class="mb-0 fw-bold"><i class="fas fa-id-card me-2"></i>Datos de la Cuenta y Perfil</h6>
+                            </div>
+                            <div class="card-body p-4 p-md-5 bg-white">
+                                <div class="row g-4 mb-5">
+                                    <div class="col-12 mb-2">
+                                        <h6 class="text-primary fw-bold small text-uppercase ls-1">Información de Acceso</h6>
+                                        <hr class="opacity-10 mt-2">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark">Nombre de Usuario (Username) <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><i class="fas fa-at text-muted"></i></span>
+                                            <input type="text" name="username" th:value="${usuario.username}" 
+                                                   class="form-control bg-light border-0 py-2 fs-6 shadow-xs" 
+                                                   placeholder="ej: juanperez" required>
+                                        </div>
+                                        <small class="text-muted x-small">Requerido para el inicio de sesión.</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark">Contraseña <span th:if="${modo == 'crear'}" class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><i class="fas fa-lock text-muted"></i></span>
+                                            <input type="password" name="password" 
+                                                   class="form-control bg-light border-0 py-2 fs-6 shadow-xs" 
+                                                   th:required="${modo == 'crear'}" 
+                                                   th:placeholder="${modo == 'editar' ? 'Dejar vacío para no cambiar' : 'Mínimo 6 caracteres'}">
+                                        </div>
+                                        <small class="text-muted x-small">En edición deje vacío para no cambiar.</small>
+                                    </div>
+
+                                    <div class="col-12 mt-4 mb-2">
+                                        <h6 class="text-primary fw-bold small text-uppercase ls-1">Información Personal</h6>
+                                        <hr class="opacity-10 mt-2">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark">Nombres Completos <span class="text-danger">*</span></label>
+                                        <input type="text" name="nombres" th:value="${usuario.nombres}" class="form-control bg-light border-0 py-2 shadow-xs" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-dark">Apellidos Completos <span class="text-danger">*</span></label>
+                                        <input type="text" name="apellidos" th:value="${usuario.apellidos}" class="form-control bg-light border-0 py-2 shadow-xs" required>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <label class="form-label fw-bold small text-dark">Correo Electrónico</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><i class="fas fa-envelope text-muted"></i></span>
+                                            <input type="email" name="email" th:value="${usuario.email}" class="form-control bg-light border-0 py-2 shadow-xs" placeholder="correo@empresa.com">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-bold small text-dark">Número de Teléfono</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><i class="fas fa-phone text-muted"></i></span>
+                                            <input type="text" name="telefono" th:value="${usuario.telefono}" class="form-control bg-light border-0 py-2 shadow-xs" placeholder="999 888 777">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-4">
+                                        <div class="form-check form-switch bg-light p-3 rounded-4 border border-dashed text-center">
+                                            <input class="form-check-input ms-0 me-3" type="checkbox" 
+                                                   name="activoCheck" value="true" id="activoCheck"
+                                                   th:checked="${usuario.activo or (usuario.id == null)}">
+                                            <label class="form-check-label fw-bold text-dark" for="activoCheck">Permitir acceso al sistema (Cuenta Activa)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-3 justify-content-end mt-4">
+                                    <a th:href="@{/admin/usuarios}" class="btn btn-light rounded-pill px-4 fw-bold shadow-xs">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                        <i class="fas fa-save me-2"></i>Guardar Colaborador
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <!-- Roles Section -->
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
+                            <div class="card-header bg-dark text-white py-3 px-4">
+                                <h6 class="mb-0 fw-bold"><i class="fas fa-user-shield me-2 text-warning"></i>Roles y Permisos</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="text-muted small mb-4">Selecciona los niveles de acceso para este usuario. Un usuario puede tener múltiples roles.</p>
+                                
+                                <div class="d-flex flex-column gap-3">
+                                    <div th:each="rol : ${roles}" class="role-selector-item p-3 rounded-4 border border-light bg-light hover-bg-white transition-all position-relative">
+                                        <input class="form-check-input role-checkbox position-absolute" type="checkbox" 
+                                               name="roles" 
+                                               th:value="${rol.name()}" 
+                                               th:id="'rol_' + ${rol.name()}"
+                                               th:checked="${usuario.roles != null and #lists.contains(usuario.roles, rol)}"
+                                               style="top: 20px; right: 20px; width: 20px; height: 20px;">
+                                        <label class="form-check-label d-flex flex-column cursor-pointer pe-5" th:for="'rol_' + ${rol.name()}">
+                                            <span class="badge rounded-pill align-self-start mb-2 px-3 py-1 shadow-xs"
+                                                  th:classappend="${rol.name() == 'ADMIN' ? 'bg-primary text-white' : 
+                                                                   (rol.name() == 'VENDEDOR' ? 'bg-success text-white' : 
+                                                                   'bg-info text-white')}"
+                                                  th:text="${rol}">ROL</span>
+                                            <span class="text-muted x-small line-height-1" th:text="${rol.name() == 'ADMIN' ? 'Acceso global sin restricciones.' : 
+                                                                                         (rol.name() == 'VENDEDOR' ? 'Solo Gestión de Ventas, Clientes y Caja.' : 
+                                                                                         'Gestión de Almacén, Productos y Stock.')}">Definición...</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-3 bg-info bg-opacity-10 rounded-4 border border-info border-opacity-10">
+                                    <small class="text-info-emphasis fw-bold d-block mb-1"><i class="fas fa-info-circle me-1"></i> Seguridad</small>
+                                    <p class="x-small text-muted mb-0">Los administradores pueden gestionar otros usuarios y ver reportes financieros sensibles.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Pic Suggestion -->
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white text-center p-4">
+                            <div class="position-relative d-inline-block mx-auto mb-3">
+                                <img id="previewImg" th:src="${usuario.fotoPerfil != null ? usuario.fotoPerfil : 'https://ui-avatars.com/api/?name=U&background=random'}" 
+                                     class="rounded-circle border shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                            <p class="text-muted x-small mb-0">La foto de perfil puede ser gestionada directamente por el usuario desde el panel de Ajustes.</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    
+    <style>
+        .role-selector-item:has(input:checked) {
+            border-color: #4361ee !important;
+            background-color: #fff !important;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.08);
+        }
+        .cursor-pointer { cursor: pointer; }
+        .x-small { font-size: 0.7rem; }
+        .ls-1 { letter-spacing: 1px; }
+        .line-height-1 { line-height: 1.3; }
+        .shadow-xs { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    </style>
+</body>
+</html>

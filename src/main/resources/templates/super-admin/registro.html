@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro Super Admin | PharmaSync')}"></head>
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="bg-dark p-4 text-center text-white">
+                        <i class="fas fa-shield-alt fa-3x mb-3 text-warning"></i>
+                        <h3 class="fw-bold mb-0">Sistema PharmaSync</h3>
+                        <p class="text-white-50 small mb-0 text-uppercase ls-2">Acceso de Control Maestro</p>
+                    </div>
+                    <div class="card-body p-4 p-md-5 bg-white">
+                        <form th:action="@{/super-admin/registro}" th:object="${usuario}" method="post">
+                            <div th:if="${error}" class="alert alert-danger rounded-3" th:text="${error}"></div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Usuario Maestro</label>
+                                <input type="text" th:field="*{username}" class="form-control rounded-3 border-2" required placeholder="ej: admin_global">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Contraseña</label>
+                                <input type="password" th:field="*{password}" class="form-control rounded-3 border-2" required>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted">Nombres</label>
+                                    <input type="text" th:field="*{nombres}" class="form-control rounded-3">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted">Apellidos</label>
+                                    <input type="text" th:field="*{apellidos}" class="form-control rounded-3">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold shadow-lg">
+                                CREAR CUENTA MAESTRA <i class="fas fa-key ms-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light p-3 text-center">
+                        <a href="/login" class="text-decoration-none small text-muted fw-bold">YA TENGO ACCESO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

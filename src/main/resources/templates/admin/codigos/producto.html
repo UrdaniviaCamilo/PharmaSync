@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Códigos del Producto')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <!-- Navbar Superior -->
+    <div th:replace="~{fragments/navbar-universal :: navbar('Códigos Generados')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+
+        <div class="container-fluid p-4">
+            
+            <div class="glass-card p-4 bg-white border-0 shadow-sm rounded-4 mb-5">
+                <div class="row align-items-center">
+                    <div class="col-md-auto text-center mb-3 mb-md-0">
+                        <div class="bg-light rounded p-3 me-md-4"><i class="fas fa-capsules fa-3x text-primary"></i></div>
+                    </div>
+                    <div class="col">
+                        <h4 class="fw-bold mb-1" th:text="${producto.nombre}">Nombre del Producto</h4>
+                        <p class="text-muted mb-0" th:text="${producto.laboratorio} + ' - ' + ${producto.presentacion}">Laboratorio - Presentación</p>
+                    </div>
+                    <div class="col-md-auto text-md-end">
+                        <div class="price-container">
+                            <small class="text-muted d-block small">Precio Venta</small>
+                            <span class="h4 fw-bold text-dark mb-0" th:text="'S/ ' + ${producto.precioVenta}">S/ 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- QR Code Card -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 h-100 bg-white shadow-sm text-center">
+                        <h5 class="fw-bold mb-4">Código QR</h5>
+                        <img th:src="'data:image/png;base64,' + ${qrCode}" class="img-fluid mb-4 border p-2 bg-white shadow-sm rounded" alt="QR Code">
+                        <p class="small text-muted mb-4">Código de identificación rápida para dispositivos móviles.</p>
+                        <a th:href="'data:image/png;base64,' + ${qrCode}" th:download="'QR_' + ${producto.nombre} + '.png'" class="btn btn-primary w-100 rounded-pill fw-bold">
+                            <i class="fas fa-download me-2"></i>Descargar PNG
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Code 128 Card -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 h-100 bg-white shadow-sm text-center">
+                        <h5 class="fw-bold mb-4">CODE 128</h5>
+                        <div class="mb-4">
+                            <img th:src="'data:image/png;base64,' + ${code128}" class="img-fluid border p-3 bg-white mb-2" alt="Code 128">
+                            <p class="fw-bold font-monospace mt-2" th:text="'PROD-' + ${producto.id}"></p>
+                        </div>
+                        <p class="small text-muted mb-4">Estándar internacional para rastreo de inventarios.</p>
+                        <a th:href="'data:image/png;base64,' + ${code128}" th:download="'CODE128_' + ${producto.nombre} + '.png'" class="btn btn-outline-primary w-100 rounded-pill fw-bold">
+                            <i class="fas fa-download me-2"></i>Descargar PNG
+                        </a>
+                    </div>
+                </div>
+
+                <!-- EAN 13 Card -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 h-100 bg-white shadow-sm text-center">
+                        <h5 class="fw-bold mb-4">EAN 13</h5>
+                        <div class="mb-4" th:if="${ean13 != null}">
+                            <img th:src="'data:image/png;base64,' + ${ean13}" class="img-fluid border p-3 bg-white mb-2" alt="EAN 13">
+                            <p class="fw-bold font-monospace mt-2" th:text="${producto.codigoEan13}"></p>
+                        </div>
+                        <div th:unless="${ean13 != null}" class="py-4 opacity-50">
+                            <i class="fas fa-barcode fa-4x mb-3"></i>
+                            <p class="text-danger small fw-bold">EAN-13 no configurado o inválido.</p>
+                            <p class="small text-muted">Asegúrate de registrar un código de 13 dígitos para habilitar EAN-13.</p>
+                        </div>
+                        <a th:if="${ean13 != null}" th:href="'data:image/png;base64,' + ${ean13}" th:download="'EAN13_' + ${producto.nombre} + '.png'" class="btn btn-outline-primary w-100 rounded-pill fw-bold">
+                            <i class="fas fa-download me-2"></i>Descargar PNG
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

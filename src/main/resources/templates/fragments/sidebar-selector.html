@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="sidebar">
+    <!-- Super Admin Sidebar -->
+    <div sec:authorize="hasRole('ROLE_SUPER_ADMIN')" th:replace="~{fragments/sidebar-super :: sidebar}"></div>
+
+    <!-- Admin Sidebar -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="~{fragments/sidebar-admin :: sidebar}"></div>
+    
+    <!-- Almacen Sidebar -->
+    <div sec:authorize="hasRole('ROLE_ALMACEN')" th:replace="~{fragments/sidebar-almacen :: sidebar}"></div>
+    
+    <!-- Vendedor Sidebar -->
+    <div sec:authorize="hasRole('ROLE_VENDEDOR')" th:replace="~{fragments/sidebar-vendedor :: sidebar}"></div>
+</div>
+</html>

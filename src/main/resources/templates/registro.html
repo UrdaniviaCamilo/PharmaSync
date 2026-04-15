@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Crear Cuenta | PharmaSync')}"></head>
+<body class="auth-body">
+
+    <!-- Ambient Background Orbs -->
+    <div class="auth-orb orb-tl"></div>
+    <div class="auth-orb orb-br"></div>
+    <div class="auth-grid-overlay"></div>
+
+    <div class="auth-page-wrapper">
+        <div class="auth-card-register shadow-soft">
+            <div class="row g-0">
+
+                <!-- ── LEFT SIDEBAR ── -->
+                <div class="col-lg-4 d-none d-lg-flex auth-sidebar-reg flex-column justify-content-between p-5">
+                    <div class="position-relative z-2">
+                        <!-- Logo -->
+                        <a href="/" class="brand-box text-decoration-none mb-5 d-flex align-items-center">
+                            <div class="brand-pill">
+                                <i class="fas fa-prescription-bottle-alt"></i>
+                            </div>
+                            <span class="brand-name ms-3">PharmaSync</span>
+                        </a>
+
+                        <h3 class="sidebar-r-title mb-2">Únete a la<br>plataforma #1</h3>
+                        <p class="sidebar-r-sub mb-5">En gestión farmacéutica para boticas y droguerías en todo el Perú.</p>
+
+                        <!-- Steps indicator -->
+                        <div class="steps-track" id="stepsTrack">
+                            <!-- Admin steps -->
+                            <div id="steps-admin" class="d-none">
+                                <div class="step-item active">
+                                    <div class="step-circle active"><span>01</span></div>
+                                    <div>
+                                        <p class="step-name">Datos de Acceso</p>
+                                        <p class="step-desc">Credenciales maestras</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>02</span></div>
+                                    <div>
+                                        <p class="step-name">Verificación</p>
+                                        <p class="step-desc">Control de seguridad</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>03</span></div>
+                                    <div>
+                                        <p class="step-name">Aprobación</p>
+                                        <p class="step-desc">Activación corporativa</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Negocio steps -->
+                            <div id="steps-negocio">
+                                <div class="step-item active">
+                                    <div class="step-circle active"><span>01</span></div>
+                                    <div>
+                                        <p class="step-name">Empresa</p>
+                                        <p class="step-desc">Identidad fiscal y ubicación</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>02</span></div>
+                                    <div>
+                                        <p class="step-name">Administrador</p>
+                                        <p class="step-desc">Acceso principal al sistema</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>03</span></div>
+                                    <div>
+                                        <p class="step-name">Listo</p>
+                                        <p class="step-desc">Configuración automática</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cliente steps -->
+                            <div id="steps-cliente" class="d-none">
+                                <div class="step-item active">
+                                    <div class="step-circle active"><span>01</span></div>
+                                    <div>
+                                        <p class="step-name">Datos personales</p>
+                                        <p class="step-desc">Tu nombre e información</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>02</span></div>
+                                    <div>
+                                        <p class="step-name">Acceso</p>
+                                        <p class="step-desc">Usuario y contraseña</p>
+                                    </div>
+                                </div>
+                                <div class="step-connector"></div>
+                                <div class="step-item">
+                                    <div class="step-circle"><span>03</span></div>
+                                    <div>
+                                        <p class="step-name">Marketplace</p>
+                                        <p class="step-desc">Empieza a comprar</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trust badge -->
+                        <div class="trust-badge mt-5">
+                            <i class="fas fa-shield-halved trust-icon"></i>
+                            <div>
+                                <p class="trust-title">Seguridad Garantizada</p>
+                                <p class="trust-desc">Datos protegidos bajo estándares internacionales</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-footer-text">© 2026 PharmaSync Cloud · v4.0</div>
+                </div>
+
+                <!-- ── RIGHT FORM PANEL ── -->
+                <div class="col-lg-8 col-12 auth-form-panel d-flex flex-column justify-content-start p-4 p-md-5">
+
+                    <!-- Mobile logo -->
+                    <div class="d-flex d-lg-none align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="brand-pill brand-pill-sm me-2"><i class="fas fa-prescription-bottle-alt"></i></div>
+                            <span class="fw-bold fs-5 text-dark">PharmaSync</span>
+                        </div>
+                        <a th:href="@{/login}" class="back-home-link text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i> Iniciar sesión
+                        </a>
+                    </div>
+
+                    <!-- Header -->
+                    <div class="form-header mb-4">
+                        <h3 class="form-title">Crear una Cuenta</h3>
+                        <p class="form-subtitle">Selecciona el tipo de cuenta que deseas registrar</p>
+                    </div>
+
+                    <!-- ── ROLE TABS ── -->
+                    <div class="role-tabs mb-4" style="grid-template-columns: repeat(3, 1fr);">
+                        <button type="button" class="role-tab" data-role="admin"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-shield-alt"></i></span>
+                            <span class="role-tab-label">Admin</span>
+                            <span class="role-tab-badge">Plataforma</span>
+                        </button>
+                        <button type="button" class="role-tab active" data-role="negocio"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-store-alt"></i></span>
+                            <span class="role-tab-label">Negocio</span>
+                            <span class="role-tab-badge">Farmacia</span>
+                        </button>
+                        <button type="button" class="role-tab" data-role="cliente"
+                                onclick="selectRole(this)">
+                            <span class="role-tab-icon"><i class="fas fa-user"></i></span>
+                            <span class="role-tab-label">Cliente</span>
+                            <span class="role-tab-badge">Comprador</span>
+                        </button>
+                    </div>
+
+                    <!-- Role hint -->
+                    <div class="role-hint-bar mb-4" id="roleHintBar">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="roleHintText">Registra tu farmacia, botica o droguería. Tendrás acceso a gestión de inventario, ventas y más.</span>
+                    </div>
+
+                    <!-- ── ALERTS ── -->
+                    <div th:if="${error}" class="auth-alert auth-alert-danger mb-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+                    <div th:if="${success}" class="auth-alert auth-alert-success mb-4">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                    </div>
+
+                    <!-- ════════════════════════════════════════
+                         FORM: ADMIN
+                         ════════════════════════════════════════ -->
+                    <form th:action="@{/super-admin/registro}" th:object="${admin}" method="post" id="formAdmin" class="auth-form" style="display:none;">
+
+                        <!-- SECCIÓN 1: Datos de Acceso -->
+                        <div class="form-section mb-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-shield-alt me-2"></i> Datos de Acceso
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombres</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{nombres}" placeholder="Tus nombres" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Apellidos</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user-tag"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{apellidos}" placeholder="Tus apellidos" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="field-group">
+                                        <label class="field-label">Correo Electrónico Corporativo</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="field-input ps-icon" th:field="*{email}" placeholder="admin@pharmasync.com" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombre de Usuario</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-at"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{username}" placeholder="usuario_admin" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Contraseña</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="field-input ps-icon" id="passAdmin" th:field="*{password}" placeholder="••••••••" minlength="6" required>
+                                            <button type="button" class="toggle-pass" onclick="togglePass('passAdmin', 'eyeAdmin')">
+                                                <i class="fas fa-eye" id="eyeAdmin"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer del form -->
+                        <div class="form-footer-row">
+                            <label class="check-wrap">
+                                <input type="checkbox" id="termsAdmin" required>
+                                <span class="check-box"></span>
+                                <span class="check-label">Acepto las <a href="#" class="terms-link">Políticas de Seguridad</a></span>
+                            </label>
+                            <button type="submit" class="btn-auth-submit btn-auth-submit-md">
+                                <span>Solicitar Acceso</span>
+                                <span class="btn-icon"><i class="fas fa-paper-plane"></i></span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- ════════════════════════════════════════
+                         FORM: NEGOCIO (Farmacia)
+                         ════════════════════════════════════════ -->
+                    <form th:action="@{/registro-empresa}" method="post" id="formNegocio" class="auth-form" style="display:block;">
+
+                        <!-- SECCIÓN 1: Datos de la Empresa -->
+                        <div class="form-section mb-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-building me-2"></i> Datos de la Empresa
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">RUC (11 dígitos)</label>
+                                        <div class="input-wrap input-with-btn">
+                                            <span class="input-icon"><i class="fas fa-id-card"></i></span>
+                                            <input type="text" class="field-input" id="rucInput" name="ruc"
+                                                   placeholder="20XXXXXXXXX" required maxlength="11">
+                                            <button type="button" id="btnConsultarRuc" class="input-side-btn"
+                                                    title="Consultar RUC en SUNAT">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombre Comercial</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-store"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="nombreComercial"
+                                                   placeholder="Farmacia Ejemplo" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="field-group">
+                                        <label class="field-label">Razón Social</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-file-contract"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="razonSocial"
+                                                   placeholder="RAZÓN SOCIAL S.A.C.">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ubigeo -->
+                                <div class="col-md-4">
+                                    <div class="field-group">
+                                        <label class="field-label">Departamento</label>
+                                        <div class="input-wrap select-wrap">
+                                            <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+                                            <select name="departamento" id="departamento" class="field-input ps-icon field-select" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="field-group">
+                                        <label class="field-label">Provincia</label>
+                                        <div class="input-wrap select-wrap">
+                                            <span class="input-icon"><i class="fas fa-map"></i></span>
+                                            <select name="provincia" id="provincia" class="field-input ps-icon field-select" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="field-group">
+                                        <label class="field-label">Distrito</label>
+                                        <div class="input-wrap select-wrap">
+                                            <span class="input-icon"><i class="fas fa-location-dot"></i></span>
+                                            <select name="distrito" id="distrito" class="field-input ps-icon field-select" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="field-group">
+                                        <label class="field-label">Dirección Fiscal</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-road"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="direccion"
+                                                   placeholder="Av. Principal 123" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN 2: Admin Principal -->
+                        <div class="form-section mb-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-user-shield me-2"></i> Administrador Principal
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombres</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="nombres"
+                                                   placeholder="Nombres" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Apellidos</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user-tag"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="apellidos"
+                                                   placeholder="Apellidos" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombre de Usuario</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-at"></i></span>
+                                            <input type="text" class="field-input ps-icon" name="username"
+                                                   placeholder="admin_usuario" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Contraseña</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="field-input ps-icon" id="passNeg" name="password"
+                                                   placeholder="••••••••" minlength="6" required>
+                                            <button type="button" class="toggle-pass" onclick="togglePass('passNeg', 'eyeNeg')">
+                                                <i class="fas fa-eye" id="eyeNeg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer del form -->
+                        <div class="form-footer-row">
+                            <label class="check-wrap">
+                                <input type="checkbox" id="termsNeg" required>
+                                <span class="check-box"></span>
+                                <span class="check-label">Acepto los <a href="#" class="terms-link">Términos de Servicio</a></span>
+                            </label>
+                            <button type="submit" class="btn-auth-submit btn-auth-submit-md">
+                                <span>Crear Sistema</span>
+                                <span class="btn-icon"><i class="fas fa-check-circle"></i></span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- ════════════════════════════════════════
+                         FORM: CLIENTE
+                         ════════════════════════════════════════ -->
+                    <form th:action="@{/registro-cliente}" th:object="${usuarioCliente}" method="post"
+                          id="formCliente" class="auth-form" style="display:none;">
+
+                        <div class="form-section mb-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-user-circle me-2"></i> Datos Personales
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombres</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{nombres}"
+                                                   placeholder="Tus nombres" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Apellidos</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-user-tag"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{apellidos}"
+                                                   placeholder="Tus apellidos" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="field-group">
+                                        <label class="field-label">Correo Electrónico</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="field-input ps-icon" th:field="*{email}"
+                                                   placeholder="tu@correo.com" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section mb-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-key me-2"></i> Credenciales de Acceso
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Nombre de Usuario</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-at"></i></span>
+                                            <input type="text" class="field-input ps-icon" th:field="*{username}"
+                                                   placeholder="ej: juanperez123" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="field-group">
+                                        <label class="field-label">Contraseña</label>
+                                        <div class="input-wrap">
+                                            <span class="input-icon"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="field-input ps-icon" id="passCli" th:field="*{password}"
+                                                   placeholder="••••••••" minlength="6" required>
+                                            <button type="button" class="toggle-pass" onclick="togglePass('passCli', 'eyeCli')">
+                                                <i class="fas fa-eye" id="eyeCli"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info card for client -->
+                        <div class="info-card mb-4">
+                            <i class="fas fa-shopping-cart info-card-icon"></i>
+                            <div>
+                                <p class="info-card-title">Acceso al Marketplace</p>
+                                <p class="info-card-desc">Podrás buscar farmacias cercanas, comprar medicamentos y gestionar tus recetas desde cualquier dispositivo.</p>
+                            </div>
+                        </div>
+
+                        <!-- Footer del form -->
+                        <div class="form-footer-row">
+                            <label class="check-wrap">
+                                <input type="checkbox" id="termsCli" required>
+                                <span class="check-box"></span>
+                                <span class="check-label">Acepto los <a href="#" class="terms-link">Términos de Servicio</a></span>
+                            </label>
+                            <button type="submit" class="btn-auth-submit btn-auth-submit-md">
+                                <span>Crear Cuenta</span>
+                                <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Social Auth -->
+                    <div class="social-auth-box mt-4">
+                        <div class="separator-line">
+                            <span>O registrarse con</span>
+                        </div>
+                        <div class="d-flex gap-3 justify-content-center mt-3">
+                            <button type="button" class="btn-social btn-google" title="Ingresar con Google">
+                                <i class="fab fa-google"></i>
+                            </button>
+                            <button type="button" class="btn-social btn-facebook" title="Ingresar con Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                            <button type="button" class="btn-social btn-apple" title="Ingresar con Apple">
+                                <i class="fab fa-apple"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Already have account -->
+                    <div class="text-center mt-4">
+                        <span class="text-muted" style="font-size:0.82rem;">¿Ya tienes cuenta?
+                            <a th:href="@{/login}" class="terms-link fw-bold ms-1">Iniciar Sesión</a>
+                        </span>
+                        <div class="mt-2">
+                            <a href="/" class="back-home-link">
+                                <i class="fas fa-arrow-left me-1"></i> Volver al inicio
+                            </a>
+                        </div>
+                    </div>
+
+                </div><!-- /col form -->
+            </div><!-- /row -->
+        </div><!-- /card -->
+    </div><!-- /wrapper -->
+
+    <style>
+        :root {
+            --role-color: #1565C0;
+            --role-color-rgb: 21, 101, 192;
+            --primary: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-soft: #E3F2FD;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body.auth-body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(25, 118, 210, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(25, 118, 210, 0.05) 0%, transparent 25%),
+                linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><path fill="%231976D2" fill-opacity="0.03" d="M40,100 Q60,60 100,40 Q140,60 160,100 Q140,140 100,160 Q60,140 40,100 M100,40 L100,160 M40,100 L160,100"/></svg>');
+            background-size: 300px;
+            animation: subtleMove 25s infinite linear;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        @keyframes subtleMove {
+            0% {
+                background-position: 0 0, 0 0, 0 0;
+            }
+
+            100% {
+                background-position: 300px 300px, -300px -300px, 150px 150px;
+            }
+        }
+
+        .auth-grid-overlay {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(25,118,210,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(25,118,210,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+        .auth-page-wrapper {
+            position: relative; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 2rem 1rem;
+        }
+
+        /* CARD */
+        .auth-card-register {
+            width: 100%; max-width: 1080px;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 2rem; overflow: hidden;
+            box-shadow: 0 40px 90px -20px rgba(25,118,210,0.22), 0 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        /* SIDEBAR REG */
+        .auth-sidebar-reg {
+            background: linear-gradient(150deg, #1976D2 0%, #1565C0 60%, #0D47A1 100%);
+            position: relative; overflow: hidden; min-height: 100%;
+        }
+        .auth-sidebar-reg::before {
+            content: ''; position: absolute;
+            width: 300px; height: 300px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -80px; right: -100px;
+        }
+
+        .brand-box { display: flex; align-items: center; }
+        .brand-pill {
+            width: 46px; height: 46px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #fff;
+            flex-shrink: 0;
+        }
+        .brand-pill-sm { width: 36px; height: 36px; border-radius: 10px; font-size: 0.9rem; }
+        .brand-name { font-family: 'Readex Pro', sans-serif; font-weight: 700; color: #fff; font-size: 1.2rem; }
+
+        .sidebar-r-title {
+            font-family: 'Readex Pro', sans-serif;
+            font-weight: 800; font-size: 1.6rem;
+            color: #fff; line-height: 1.3;
+        }
+        .sidebar-r-sub { color: rgba(255,255,255,0.6); font-size: 0.83rem; line-height: 1.6; }
+        .sidebar-footer-text { color: rgba(255,255,255,0.3); font-size: 0.7rem; }
+
+        /* Steps */
+        .steps-track { display: flex; flex-direction: column; }
+        .step-item { display: flex; align-items: flex-start; gap: 0.875rem; }
+        .step-circle {
+            width: 36px; height: 36px;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+        }
+        .step-circle.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+        .step-name { color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 700; margin-bottom: 0.15rem; }
+        .step-desc { color: rgba(255,255,255,0.45); font-size: 0.72rem; margin: 0; }
+        .step-connector {
+            width: 2px; height: 28px; background: rgba(255,255,255,0.1);
+            margin: 4px 0 4px 17px;
+        }
+
+        /* Trust badge */
+        .trust-badge {
+            display: flex; gap: 0.75rem; align-items: flex-start;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 1rem; padding: 1rem;
+        }
+        .trust-icon { color: rgba(255,255,255,0.7); font-size: 1.3rem; margin-top: 2px; }
+        .trust-title { color: rgba(255,255,255,0.9); font-size: 0.8rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .trust-desc { color: rgba(255,255,255,0.5); font-size: 0.72rem; margin: 0; line-height: 1.4; }
+
+        /* FORM PANEL */
+        .auth-form-panel { background: #fff; }
+        .form-title { font-family: 'Readex Pro', sans-serif; font-weight: 800; font-size: 1.6rem; color: #0f172a; }
+        .form-subtitle { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; }
+
+        /* TABS – 2 cols for register */
+        .role-tabs {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;
+            background: #f1f5f9; padding: 0.375rem; border-radius: 1rem;
+        }
+        .role-tab {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.75rem 0.5rem; background: transparent; border: none;
+            border-radius: 0.75rem; cursor: pointer; transition: all 0.25s ease; color: #64748b;
+        }
+        .role-tab-icon { font-size: 1.1rem; }
+        .role-tab-label { font-size: 0.8rem; font-weight: 700; }
+        .role-tab-badge { font-size: 0.65rem; color: #94a3b8; font-weight: 500; }
+        .role-tab.active {
+            background: #fff; color: var(--role-color);
+            box-shadow: 0 2px 12px rgba(var(--role-color-rgb), 0.2);
+        }
+        .role-tab.active .role-tab-badge { color: rgba(var(--role-color-rgb), 0.6); }
+        .role-tab:not(.active):hover { background: rgba(255,255,255,0.6); color: #334155; }
+
+        /* Hint bar */
+        .role-hint-bar {
+            padding: 0.6rem 1rem; border-radius: 0.75rem; font-size: 0.78rem;
+            background: rgba(var(--role-color-rgb), 0.08);
+            color: rgb(var(--role-color-rgb));
+            border: 1px solid rgba(var(--role-color-rgb), 0.15);
+            display: flex; align-items: center; transition: all 0.3s ease;
+        }
+
+        /* Alerts */
+        .auth-alert { padding: 0.75rem 1rem; border-radius: 0.875rem; font-size: 0.82rem; display: flex; align-items: center; }
+        .auth-alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .auth-alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+
+        /* Form sections */
+        .form-section { margin-bottom: 0; }
+        .section-title {
+            font-size: 0.72rem; font-weight: 700; color: var(--role-color);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 1rem; display: flex; align-items: center;
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid rgba(var(--role-color-rgb), 0.12);
+        }
+
+        /* Fields */
+        .field-label {
+            display: block; font-size: 0.72rem; font-weight: 700;
+            color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+        .input-wrap { position: relative; }
+        .input-icon {
+            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+            color: #94a3b8; font-size: 0.875rem; pointer-events: none; z-index: 1;
+        }
+        .field-input {
+            width: 100%; padding: 0.75rem 1rem;
+            background: #f8fafc; border: 2px solid transparent;
+            border-radius: 0.875rem; font-size: 0.88rem; color: #0f172a;
+            outline: none; transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif; appearance: none;
+        }
+        .field-input.ps-icon { padding-left: 2.75rem; }
+        .field-input:focus { background: #fff; border-color: var(--role-color); box-shadow: 0 0 0 4px rgba(var(--role-color-rgb), 0.1); }
+        .field-input::placeholder { color: #cbd5e1; }
+        .field-select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+
+        /* Input with side btn (RUC) */
+        .input-with-btn .field-input { border-radius: 0.875rem 0 0 0.875rem; }
+        .input-side-btn {
+            position: absolute; right: 0; top: 0; bottom: 0;
+            background: var(--role-color); color: #fff; border: none;
+            border-radius: 0 0.875rem 0.875rem 0;
+            padding: 0 1rem; cursor: pointer;
+            transition: all 0.2s; font-size: 0.85rem;
+        }
+        .input-side-btn:hover { filter: brightness(1.1); }
+
+        .toggle-pass {
+            position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+            background: transparent; border: none; cursor: pointer; color: #94a3b8; padding: 0.25rem;
+        }
+        .toggle-pass:hover { color: #475569; }
+
+        /* Check */
+        .check-wrap { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none; }
+        .check-wrap input[type="checkbox"] { display: none; }
+        .check-box {
+            width: 18px; height: 18px; border: 2px solid #cbd5e1; border-radius: 5px;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
+        }
+        .check-wrap input:checked + .check-box { background: var(--role-color); border-color: var(--role-color); }
+        .check-wrap input:checked + .check-box::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+        .check-label { font-size: 0.78rem; color: #64748b; font-weight: 500; }
+        .terms-link { color: var(--role-color); text-decoration: none; font-weight: 600; }
+        .terms-link:hover { text-decoration: underline; }
+
+        /* Submit */
+        .form-footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid #f1f5f9; }
+        .btn-auth-submit {
+            display: inline-flex; align-items: center; gap: 0.625rem;
+            padding: 0.85rem 2rem; border-radius: 2rem;
+            background: linear-gradient(135deg, var(--role-color), color-mix(in srgb, var(--role-color) 70%, #000 30%));
+            color: #fff; border: none; cursor: pointer;
+            font-size: 0.88rem; font-weight: 700; font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px -8px rgba(var(--role-color-rgb), 0.5);
+        }
+        .btn-auth-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px rgba(var(--role-color-rgb), 0.6); }
+        .btn-auth-submit:active { transform: translateY(0); }
+        .btn-icon { transition: transform 0.3s; }
+        .btn-auth-submit:hover .btn-icon { transform: translateX(4px); }
+
+        /* Info card (cliente) */
+        .info-card {
+            display: flex; gap: 0.875rem; align-items: flex-start;
+            background: rgba(var(--role-color-rgb), 0.05);
+            border: 1px solid rgba(var(--role-color-rgb), 0.12);
+            border-radius: 1rem; padding: 1rem 1.25rem;
+        }
+        .info-card-icon { color: var(--role-color); font-size: 1.3rem; margin-top: 2px; flex-shrink: 0; }
+        .info-card-title { font-weight: 700; font-size: 0.82rem; color: #0f172a; margin-bottom: 0.2rem; }
+        .info-card-desc { font-size: 0.78rem; color: #64748b; margin: 0; line-height: 1.5; }
+
+        /* Footer links */
+        .back-home-link { font-size: 0.78rem; color: #94a3b8; text-decoration: none; }
+        .back-home-link:hover { color: #475569; }
+
+        /* Social Auth */
+        .social-auth-box { width: 100%; text-align: center; }
+        .separator-line {
+            display: flex; align-items: center; text-align: center; color: #94a3b8; font-size: 0.8rem;
+        }
+        .separator-line::before, .separator-line::after {
+            content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; margin: 0 10px;
+        }
+        .btn-social {
+            width: 45px; height: 45px;
+            border-radius: 50%; border: 1px solid #e2e8f0;
+            background: #fff; color: #475569;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-social:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .btn-google:hover { color: #DB4437; border-color: #DB4437; }
+        .btn-facebook:hover { color: #4267B2; border-color: #4267B2; }
+        .btn-apple:hover { color: #000; border-color: #000; }
+
+        /* Transitions */
+        .auth-form { animation: formIn 0.3s ease; }
+        @keyframes formIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 767px) {
+            .auth-page-wrapper { align-items: flex-start; padding: 1rem; }
+            .auth-card-register { border-radius: 1.25rem; }
+            .auth-form-panel { padding: 1.5rem !important; }
+        }
+    </style>
+
+    <!-- Peru Ubigeo Script -->
+    <script src="/js/peru-ubigeo.js"></script>
+
+    <script th:inline="javascript">
+        const roleConfig = {
+            admin: {
+                color: '#1976D2', rgb: '25, 118, 210',
+                hint: 'Acceso para el personal interno, soporte técnico y administradores de la plataforma.'
+            },
+            negocio: {
+                color: '#1565C0', rgb: '21, 101, 192',
+                hint: 'Registra tu farmacia, botica o droguería. Tendrás acceso completo a gestión de inventario, ventas y más.'
+            },
+            cliente: {
+                color: '#0D47A1', rgb: '13, 71, 161',
+                hint: 'Crea tu cuenta de cliente para comprar medicamentos, subir recetas y rastrear tus pedidos en tiempo real.'
+            }
+        };
+
+        function selectRole(tab) {
+            document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const role = tab.dataset.role;
+            const cfg = roleConfig[role];
+
+            // Update CSS vars
+            document.documentElement.style.setProperty('--role-color', cfg.color);
+            document.documentElement.style.setProperty('--role-color-rgb', cfg.rgb);
+
+            // Toggle forms
+            document.getElementById('formAdmin').style.display = role === 'admin' ? 'block' : 'none';
+            document.getElementById('formNegocio').style.display = role === 'negocio' ? 'block' : 'none';
+            document.getElementById('formCliente').style.display = role === 'cliente' ? 'block' : 'none';
+
+            // Toggle steps
+            document.getElementById('steps-admin').classList.toggle('d-none', role !== 'admin');
+            document.getElementById('steps-negocio').classList.toggle('d-none', role !== 'negocio');
+            document.getElementById('steps-cliente').classList.toggle('d-none', role !== 'cliente');
+
+            // Hint
+            document.getElementById('roleHintText').textContent = cfg.hint;
+            const hintBar = document.getElementById('roleHintBar');
+            hintBar.style.opacity = '0';
+            setTimeout(() => { hintBar.style.opacity = '1'; }, 150);
+        }
+
+        // Toggle password visibility
+        function togglePass(inputId, iconId) {
+            const pw = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            pw.type = pw.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+
+        // RUC Consultation
+        document.getElementById('btnConsultarRuc').addEventListener('click', async function() {
+            const ruc = document.getElementById('rucInput').value;
+            if (ruc.length !== 11) {
+                Swal.fire({ icon: 'error', title: 'RUC inválido', text: 'El RUC debe tener exactamente 11 dígitos.', confirmButtonColor: '#4361ee' });
+                return;
+            }
+            const btn = this;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            btn.disabled = true;
+            try {
+                const response = await fetch(`/api/ruc?numero=${ruc}`);
+                const data = await response.json();
+                if (data && data.razonSocial) {
+                    document.getElementsByName('nombreComercial')[0].value = data.nombreComercial || data.razonSocial;
+                    document.getElementsByName('razonSocial')[0].value = data.razonSocial;
+                    if (data.direccion) document.getElementsByName('direccion')[0].value = data.direccion;
+                    Swal.fire({ icon: 'success', title: 'Empresa Encontrada', text: data.razonSocial, timer: 2500, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'warning', title: 'No encontrado', text: 'No se hallaron datos para este RUC.', confirmButtonColor: '#4361ee' });
+                }
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'No se pudo contactar al servicio de SUNAT.', confirmButtonColor: '#4361ee' });
+            } finally {
+                btn.innerHTML = '<i class="fas fa-search"></i>';
+                btn.disabled = false;
+            }
+        });
+
+        // Restore role: priority = URL param > sessionStorage > default
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlRole = urlParams.get('role');
+            const savedRole = urlRole || sessionStorage.getItem('registerRole') || 'negocio';
+            const tab = document.querySelector(`.role-tab[data-role="${savedRole}"]`);
+            if (tab) selectRole(tab);
+        })();
+
+        document.querySelectorAll('.role-tab').forEach(tab => {
+            tab.addEventListener('click', () => sessionStorage.setItem('registerRole', tab.dataset.role));
+        });
+    </script>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

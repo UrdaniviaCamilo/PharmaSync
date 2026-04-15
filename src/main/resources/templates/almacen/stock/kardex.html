@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Kardex Detallado - ' + producto.nombre)}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+    
+    <div th:replace="~{fragments/navbar-universal :: navbar('Movimientos de Inventario (Kardex)')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+        <div class="container-fluid p-4">
+            
+            <!-- Breadcrumbs / Back -->
+            <div class="d-flex align-items-center mb-4">
+                <a th:href="@{/almacen/stock/ingreso}" class="btn btn-outline-light text-primary rounded-circle border-0 me-3 shadow-xs">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="fw-bold text-dark mb-0 h4" th:text="${producto.nombre}">Medicamento</h2>
+                    <p class="text-muted mb-0 small" th:text="${producto.laboratorio + ' | ' + producto.presentacion}">Lab | Pres</p>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-primary text-white h-100">
+                        <h6 class="x-small fw-bold opacity-75 text-uppercase mb-3 ls-1">Stock Actual</h6>
+                        <div class="d-flex align-items-end">
+                            <h1 class="fw-bold mb-0 me-3 lh-1" th:text="${producto.stock}">0</h1>
+                            <span class="mb-1 fw-bold opacity-75">Unidades</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <h6 class="x-small fw-bold text-muted text-uppercase mb-3 ls-1">Precio de Venta</h6>
+                        <div class="d-flex align-items-end text-primary">
+                            <h2 class="fw-bold mb-0 me-2 lh-1" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precioVenta, 1, 2)}">0.00</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 border-start border-4" 
+                         th:classappend="${producto.stock <= producto.stockMinimo ? 'border-danger' : 'border-success'}">
+                        <h6 class="x-small fw-bold text-muted text-uppercase mb-3 ls-1">Estado de Reposición</h6>
+                        <span class="badge rounded-pill px-3 py-2" 
+                              th:classappend="${producto.stock <= producto.stockMinimo ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}"
+                              th:text="${producto.stock <= producto.stockMinimo ? 'BAJO STOCK - REABASTECER' : 'NIVEL ÓPTIMO'}">ESTADO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kardex Table -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom p-4">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-list-ul text-muted me-2"></i>Historial de Movimientos</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 x-small fw-bold text-muted text-uppercase">Fecha y Hora</th>
+                                <th class="py-3 x-small fw-bold text-muted text-uppercase">Responsable</th>
+                                <th class="py-3 x-small fw-bold text-muted text-uppercase text-center">Tipo</th>
+                                <th class="py-3 x-small fw-bold text-muted text-uppercase text-center">Cant.</th>
+                                <th class="pe-4 py-3 x-small fw-bold text-muted text-uppercase">Concepto / Notas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="m : ${movimientos}">
+                                <td class="ps-4 py-3">
+                                    <span class="fw-bold small text-dark" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy')}">10/10/24</span>
+                                    <span class="ms-1 x-small text-muted" th:text="${#temporals.format(m.fecha, 'HH:mm')}">14:00</span>
+                                </td>
+                                <td class="py-3">
+                                    <span class="small fw-bold text-primary" th:text="${m.usuario != null ? m.usuario.nombres : 'SISTEMA'}">Admin</span>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <span class="badge rounded-pill px-3 py-1 x-small fw-bold" 
+                                          th:classappend="${m.tipo == 'INGRESO' ? 'bg-success text-white' : 'bg-danger text-white'}"
+                                          th:text="${m.tipo}">TIPO</span>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <span class="fw-bold h5 mb-0" th:classappend="${m.tipo == 'INGRESO' ? 'text-success' : 'text-danger'}" 
+                                          th:text="${(m.tipo == 'INGRESO' ? '+' : '-') + m.cantidad}">0</span>
+                                </td>
+                                <td class="pe-4 py-3">
+                                    <p class="mb-0 small text-dark fw-medium" th:text="${m.observaciones}">Concepto</p>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(movimientos)}">
+                                <td colspan="5" class="py-5 text-center text-muted">No hay registros detallados para este producto.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <style>
+        .x-small { font-size: 0.7rem; }
+        .ls-1 { letter-spacing: 0.5px; }
+        .shadow-xs { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    </style>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

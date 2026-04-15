@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="sidebar">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header border-bottom d-flex align-items-center justify-content-center px-3">
+            <div class="sidebar-logo-container d-flex align-items-center justify-content-center flex-grow-1">
+                <img th:src="@{${config.logoUrl != null ? config.logoUrl : '/images/logo-default.png'}}"
+                     alt="Logo" class="sidebar-logo rounded-2 shadow-sm me-2">
+                <span class="sidebar-title fw-bold text-truncate" th:text="${config.nombreFarmacia}">PharmaSync</span>
+            </div>
+            <button class="sidebar-toggle-btn ms-2" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-user p-4 border-bottom text-center">
+            <div class="user-avatar-container mx-auto mb-2 position-relative d-inline-block">
+                <img th:src="@{${usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty() ? usuario.fotoPerfil : 'https://ui-avatars.com/api/?name=' + usuario.nombres + '+' + usuario.apellidos + '&background=random'}}"
+                     alt="Avatar" class="user-avatar rounded-circle shadow-sm border border-2 border-white" style="width: 60px; height: 60px; object-fit: cover;">
+                <span class="user-status bg-success"></span>
+            </div>
+            <div class="user-info">
+                <span class="user-name fw-bold small d-block text-dark" th:text="${usuario.nombres + ' ' + usuario.apellidos}">Nombre Vendedor</span>
+                <span class="user-role badge bg-info text-dark rounded-pill px-2 py-1 mt-1" style="font-size: 0.65rem;">VENTAS | ATENCIÓN</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav py-3">
+            <div class="nav-section mb-3">
+                <span class="nav-section-title px-4 x-small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">RESUMEN</span>
+                <a th:href="@{/vendedor/dashboard}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'dashboard'} ? 'active' : ''">
+                    <div class="nav-icon me-3"><i class="fas fa-chart-line"></i></div>
+                    <span class="nav-text small">Mi Dashboard</span>
+                </a>
+                <a th:href="@{/admin/rendimiento}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'rendimiento'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-user-chart"></i></div>
+                    <span class="nav-text small">Mi Rendimiento</span>
+                </a>
+            </div>
+
+            <div class="nav-section mb-3">
+                <span class="nav-section-title px-4 x-small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">VENTAS</span>
+                <a th:href="@{/admin/ventas/nueva}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none bg-primary text-white mx-3 mb-2 shadow-sm rounded-3">
+                    <div class="nav-icon me-3"><i class="fas fa-cash-register"></i></div>
+                    <span class="nav-text small fw-bold">Nueva Venta (POS)</span>
+                </a>
+                <a th:href="@{/admin/recetas}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'recetas'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75 text-warning"><i class="fas fa-file-prescription"></i></div>
+                    <span class="nav-text small flex-grow-1">Validar Recetas</span>
+                    <span class="nav-badge badge bg-warning text-dark rounded-pill" th:if="${cantidadRecetasPendientes > 0}" th:text="${cantidadRecetasPendientes}">0</span>
+                </a>
+                <a th:href="@{/admin/ventas}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'ventas'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-history"></i></div>
+                    <span class="nav-text small">Mis Ventas</span>
+                </a>
+                <a th:href="@{/admin/caja}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'caja'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-vault"></i></div>
+                    <span class="nav-text small flex-grow-1">Control de Caja</span>
+                    <span class="nav-badge badge bg-success rounded-pill" th:if="${cajaAbierta}">Abierta</span>
+                </a>
+            </div>
+
+            <div class="nav-section mb-3">
+                <span class="nav-section-title px-4 x-small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">CONSULTAS</span>
+                <a th:href="@{/admin/productos}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'productos'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-search"></i></div>
+                    <span class="nav-text small">Buscar Stock</span>
+                </a>
+                <a th:href="@{/admin/clientes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'clientes'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-users"></i></div>
+                    <span class="nav-text small">Clientes</span>
+                </a>
+            </div>
+
+            <div class="nav-divider border-top my-3 mx-4 opacity-10"></div>
+
+            <div class="nav-section mb-3">
+                <span class="nav-section-title px-4 x-small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">USUARIO</span>
+                <a th:href="@{/perfil/ajustes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'perfil'} ? 'active' : ''">
+                    <div class="nav-icon me-3"><i class="fas fa-user-edit"></i></div>
+                    <span class="nav-text small">Mi Perfil / Ajustes</span>
+                </a>
+                <form th:action="@{/logout}" method="post" id="logoutForm_vendedor">
+                    <button type="submit" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none text-danger border-0 bg-transparent w-100 text-start">
+                        <div class="nav-icon me-3 opacity-75"><i class="fas fa-sign-out-alt"></i></div>
+                        <span class="nav-text small">Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer p-4 border-top">
+            <div class="sidebar-version small text-muted d-flex align-items-center">
+                <i class="fas fa-code-branch me-2"></i>
+                <span>v3.0.0 Premium</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Styles and Scripts are the same as sidebar-admin.html -->
+    <style th:replace="~{fragments/sidebar-admin :: style}"></style>
+    <script th:replace="~{fragments/sidebar-admin :: script}"></script>
+</div>
+</html>

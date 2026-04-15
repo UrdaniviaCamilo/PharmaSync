@@ -1,0 +1,332 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="sidebar">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header border-bottom d-flex align-items-center justify-content-center px-3">
+            <div class="sidebar-logo-container d-flex align-items-center justify-content-center flex-grow-1">
+                <div class="sidebar-logo-wrapper me-2">
+                    <img th:src="${config.logoUrl != null && !config.logoUrl.isEmpty() ? config.logoUrl : '/images/logo-default.png'}"
+                         alt="Logo" class="sidebar-logo rounded-2 shadow-sm">
+                </div>
+                <span class="sidebar-title fw-bold text-truncate" th:text="${config.nombreFarmacia}">PharmaSync</span>
+            </div>
+            <button class="sidebar-toggle-btn ms-2" id="sidebarToggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-user p-4 border-bottom text-center">
+            <div class="user-avatar-container mx-auto mb-2 position-relative d-inline-block">
+                <img th:src="@{${usuario.fotoPerfil != null ? usuario.fotoPerfil : 'https://ui-avatars.com/api/?name=' + usuario.nombres + '+' + usuario.apellidos + '&background=random'}}"
+                     alt="Avatar" class="user-avatar rounded-3 shadow-sm border border-2 border-white">
+                <span class="user-status"></span>
+            </div>
+            <div class="user-info">
+                <span class="user-name fw-bold small d-block" th:text="${usuario.nombres + ' ' + usuario.apellidos}">Admin</span>
+                <span class="user-role badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 mt-1" 
+                      style="font-size: 0.7rem;" 
+                      th:text="${usuario.roles != null && !usuario.roles.isEmpty() ? usuario.roles.iterator().next() : 'Admin'}">Administrador</span>
+            </div>
+        </div>
+
+        <div class="sidebar-search p-3 border-bottom">
+            <div class="position-relative">
+                <i class="fas fa-search search-icon position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
+                <input type="text" placeholder="Buscar en el menú..." class="sidebar-search-input form-control form-control-sm ps-5 bg-light border-0 rounded-3">
+            </div>
+        </div>
+
+        <nav class="sidebar-nav py-3">
+            <div class="nav-section mb-4">
+                <span class="nav-section-title px-4 small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">PRINCIPAL</span>
+                <a th:href="@{/dashboard}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'dashboard'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-home"></i></div>
+                    <span class="nav-text small">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="nav-section mb-4" sec:authorize="hasAnyRole('ADMIN', 'ALMACEN')">
+                <span class="nav-section-title px-4 small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">GESTIÓN</span>
+                <a th:href="@{/admin/productos}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'productos'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-pills"></i></div>
+                    <span class="nav-text small flex-grow-1">Productos</span>
+                    <span class="nav-badge badge bg-danger rounded-pill" th:if="${cantidadStockBajo > 0}" th:text="${cantidadStockBajo}">3</span>
+                </a>
+                <a th:href="@{/admin/categorias}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'categorias'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-tags"></i></div>
+                    <span class="nav-text small">Categorías</span>
+                </a>
+                <a th:href="@{/admin/recetas}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'recetas'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75 text-warning"><i class="fas fa-file-prescription"></i></div>
+                    <span class="nav-text small flex-grow-1">Validación de Recetas</span>
+                    <span class="nav-badge badge bg-warning text-dark rounded-pill" th:if="${cantidadRecetasPendientes > 0}" th:text="${cantidadRecetasPendientes}">0</span>
+                </a>
+                <a th:href="@{/admin/ventas}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'ventas'} ? 'active' : ''" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-shopping-cart"></i></div>
+                    <span class="nav-text small">Ventas</span>
+                </a>
+                <a th:href="@{/admin/clientes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'clientes'} ? 'active' : ''" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-users"></i></div>
+                    <span class="nav-text small">Clientes</span>
+                </a>
+                <a th:href="@{/admin/usuarios}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'usuarios'} ? 'active' : ''" sec:authorize="hasRole('ADMIN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-user-cog"></i></div>
+                    <span class="nav-text small">Usuarios</span>
+                </a>
+                <a th:href="@{/admin/proveedores}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'proveedores'} ? 'active' : ''" sec:authorize="hasAnyRole('ADMIN', 'ALMACEN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-truck"></i></div>
+                    <span class="nav-text small">Proveedores</span>
+                </a>
+            </div>
+
+            <div class="nav-section mb-4">
+                <span class="nav-section-title px-4 small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">OPERACIONES</span>
+                <a th:href="@{/admin/caja}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'caja'} ? 'active' : ''" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-cash-register"></i></div>
+                    <span class="nav-text small flex-grow-1">Caja</span>
+                    <span class="nav-badge badge bg-success rounded-pill" th:if="${cajaAbierta}">Abierta</span>
+                </a>
+                <a th:href="@{/admin/codigos}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'codigos'} ? 'active' : ''" sec:authorize="hasAnyRole('ADMIN', 'ALMACEN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-qrcode"></i></div>
+                    <span class="nav-text small">Códigos</span>
+                </a>
+                <a th:href="@{/admin/reportes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'reportes'} ? 'active' : ''" sec:authorize="hasRole('ADMIN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-chart-bar"></i></div>
+                    <span class="nav-text small">Reportes</span>
+                </a>
+                <a th:href="@{/admin/rendimiento}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'rendimiento'} ? 'active' : ''" sec:authorize="hasRole('ADMIN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-chart-line"></i></div>
+                    <span class="nav-text small">Rendimiento</span>
+                </a>
+            </div>
+
+            <div class="nav-section mb-4">
+                <span class="nav-section-title px-4 small text-uppercase text-muted fw-bold ls-1 mb-2 d-block">AJUSTES</span>
+                <a th:href="@{/perfil/ajustes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" th:classappend="${paginaActiva == 'perfil'} ? 'active' : ''">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-user-edit"></i></div>
+                    <span class="nav-text small">Mi Perfil / Datos</span>
+                </a>
+                <a th:href="@{/admin/ajustes}" class="nav-item d-flex align-items-center px-4 py-2 text-decoration-none" 
+                   th:classappend="${paginaActiva == 'ajustes'} ? 'active' : ''"
+                   sec:authorize="hasRole('ADMIN')">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-cog"></i></div>
+                    <span class="nav-text small">Configuración Farmacia</span>
+                </a>
+            </div>
+
+            <div class="nav-divider border-top my-4 mx-4"></div>
+
+            <form th:action="@{/logout}" method="post" id="logoutForm_admin" class="px-4">
+                <button type="submit" class="nav-item d-flex align-items-center py-2 text-decoration-none text-danger border-0 bg-transparent w-100 text-start">
+                    <div class="nav-icon me-3 opacity-75"><i class="fas fa-sign-out-alt"></i></div>
+                    <span class="nav-text small">Cerrar Sesión</span>
+                </button>
+            </form>
+        </nav>
+
+        <div class="sidebar-footer p-4 border-top">
+            <div class="sidebar-version small text-muted d-flex align-items-center">
+                <i class="fas fa-code-branch me-2"></i>
+                <span>v3.0.0 Premium</span>
+            </div>
+        </div>
+    </aside>
+
+    <style th:fragment="style" th:inline="css">
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 80px;
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: #ffffff;
+            transition: var(--transition);
+            z-index: 1050;
+            overflow-y: auto;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .sidebar-header {
+            height: 70px;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .nav-section-title,
+        .sidebar.collapsed .sidebar-search,
+        .sidebar.collapsed .sidebar-version span,
+        .sidebar.collapsed .nav-badge {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0 !important;
+        }
+
+        .sidebar-logo {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            white-space: nowrap;
+            color: #1e293b;
+        }
+
+        .sidebar-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: #f8fafc;
+            color: var(--primary-color);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+        }
+
+        .user-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: var(--success-color);
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .nav-item {
+            border-radius: 10px;
+            margin: 2px 15px;
+            color: #64748b;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+        }
+
+        .ls-1 { letter-spacing: 1px; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            background-color: #f8fafc;
+            padding: 0;
+        }
+
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width) !important;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+
+    <script th:fragment="scripts" th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const mainContent = document.querySelector('.main-content');
+            const searchInput = document.querySelector('.sidebar-search-input');
+            const navItems = document.querySelectorAll('.nav-item');
+
+            // Load saved state
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+                if (mainContent) mainContent.classList.add('expanded');
+                if (toggleBtn) {
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+                }
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    if (mainContent) mainContent.classList.toggle('expanded');
+                    
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+
+                    const icon = toggleBtn.querySelector('i');
+                    if (isCollapsed) {
+                        icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+                    } else {
+                        icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+                    }
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const term = e.target.value.toLowerCase();
+                    navItems.forEach(item => {
+                        const textElement = item.querySelector('.nav-text');
+                        if (textElement) {
+                            const text = textElement.textContent.toLowerCase();
+                            item.style.display = text.includes(term) ? 'flex' : 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</div>
+</html>

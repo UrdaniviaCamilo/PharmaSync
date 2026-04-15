@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Gestión de Caja')}"></head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/sidebar-selector :: sidebar}"></div>
+
+    <!-- Navbar Superior -->
+    <div th:replace="~{fragments/navbar-admin :: navbar('Gestión de Caja')}"></div>
+
+    <main class="main-content mt-5 pt-3">
+
+        <div class="container-fluid p-4">
+            
+            <!-- Alerts -->
+            <div th:if="${success}" class="alert alert-success border-0 shadow-sm rounded-pill px-4 mb-4" role="alert">
+                <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger border-0 shadow-sm rounded-pill px-4 mb-4" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
+            </div>
+
+            <div class="row g-4">
+                <!-- Status Card -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 h-100 bg-white border-0 shadow-sm rounded-4 text-center">
+                        <div th:if="${caja == null}">
+                            <div class="feature-icon bg-danger mx-auto mb-4 scale-up"><i class="fas fa-lock"></i></div>
+                            <h4 class="fw-bold mb-2">Caja Cerrada</h4>
+                            <p class="text-muted mb-4">Debes aperturar la caja para poder realizar ventas y movimientos.</p>
+                            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#aperturaModal">
+                                <i class="fas fa-key me-2"></i>Aperturar Caja
+                            </button>
+                        </div>
+                        <div th:if="${caja != null}">
+                            <div class="feature-icon bg-success mx-auto mb-4 scale-up"><i class="fas fa-unlock"></i></div>
+                            <h4 class="fw-bold mb-2">Caja Abierta</h4>
+                            <p class="text-muted mb-0 small">Iniciada: <span th:text="${#temporals.format(caja.fechaApertura, 'dd/MM/yyyy HH:mm')}"></span></p>
+                            <p class="text-muted mb-4 small">Responsable: <span th:text="${caja.usuario?.nombres}"></span></p>
+                            
+                            <hr class="my-4 opacity-10">
+                            
+                            <div class="mb-4">
+                                <small class="text-muted text-uppercase fw-bold ls-1 d-block mb-1">Saldo Estimado</small>
+                                <h2 class="display-6 fw-bold text-primary" th:text="'S/ ' + ${caja.montoInicial.add(caja.totalVentas).subtract(caja.totalGastos)}">S/ 0.00</h2>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary py-3 rounded-pill fw-bold shadow-sm mb-2" data-bs-toggle="modal" data-bs-target="#movimientoModal">
+                                    <i class="fas fa-plus-circle me-2"></i>Registrar Gasto
+                                </button>
+                                <button class="btn btn-outline-danger py-3 rounded-pill fw-bold" onclick="confirmCierre()">
+                                    <i class="fas fa-door-closed me-2"></i>Cerrar Caja
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats & Summary -->
+                <div class="col-lg-8" th:if="${caja != null}">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 border-start border-primary border-4 bg-white shadow-sm">
+                                <small class="text-muted fw-bold">Monto Inicial</small>
+                                <h4 class="fw-bold mb-0" th:text="'S/ ' + ${caja.montoInicial}">0.00</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 border-start border-success border-4 bg-white shadow-sm">
+                                <small class="text-muted fw-bold">Ingresos (Ventas)</small>
+                                <h4 class="fw-bold mb-0" th:text="'S/ ' + ${caja.totalVentas}">0.00</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 border-start border-danger border-4 bg-white shadow-sm">
+                                <small class="text-muted fw-bold">Gastos / Egresos</small>
+                                <h4 class="fw-bold mb-0" th:text="'S/ ' + ${caja.totalGastos}">0.00</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters & History -->
+                    <div class="glass-card p-4 bg-white border-0 shadow-sm rounded-4 mb-4">
+                        <form th:action="@{/admin/caja}" method="get" class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">FECHA INICIO</label>
+                                <input type="date" name="start" class="form-control bg-light border-0 py-2" th:value="${param.start}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">FECHA FIN</label>
+                                <input type="date" name="end" class="form-control bg-light border-0 py-2" th:value="${param.end}">
+                            </div>
+                            <div class="col-md-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-grow-1 py-2 rounded-pill fw-bold">
+                                    Filtrar <i class="fas fa-filter ms-1"></i>
+                                </button>
+                                <a th:href="@{/admin/caja}" class="btn btn-light rounded-pill p-2" title="Limpiar Filtros">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Movement List -->
+                    <div class="glass-card p-4 bg-white border-0 shadow-sm rounded-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h5 class="fw-bold mb-0" th:text="${filtrado != null and filtrado ? 'Historial de Movimientos' : 'Movimientos del Día'}">Movimientos del Día</h5>
+                                <small th:if="${filtrado != null and filtrado}" class="text-primary fw-bold" th:text="'Periodo: ' + ${param.start} + ' al ' + ${param.end}">Periodo</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/admin/caja/exportar/excel}" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-file-excel me-1"></i> Excel
+                                </a>
+                                <a th:href="@{/admin/caja/exportar/pdf}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-file-pdf me-1"></i> PDF
+                                </a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Descripción</th>
+                                        <th>Monto</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="mov : ${movimientos}">
+                                        <td class="small text-muted" th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy HH:mm')}">10:00</td>
+                                        <td>
+                                            <span th:classappend="${mov.tipo == 'VENTA' || mov.tipo == 'INGRESO' ? 'badge bg-success-soft text-success' : 'badge bg-danger-soft text-danger'}" class="rounded-pill px-3 py-1" th:text="${mov.tipo}">TIPO</span>
+                                        </td>
+                                        <td th:text="${mov.descripcion}">Descripción</td>
+                                        <td class="fw-bold" th:text="'S/ ' + ${mov.monto}">0.00</td>
+                                        <td class="text-muted small" th:text="${mov.usuario?.nombres}">Admin</td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(movimientos)}">
+                                        <td colspan="5" class="text-center py-5 text-muted small">No hay movimientos registrados.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Apertura Modal -->
+    <div class="modal fade" id="aperturaModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <form th:action="@{/admin/caja/apertura}" method="post">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Aperturar Caja</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <label class="form-label fw-bold mb-3">Monto Inicial en Efectivo <span class="text-danger">*</span></label>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-light border-0">S/</span>
+                            <input type="number" step="0.10" name="montoInicial" class="form-control bg-light border-0 py-3" value="0.00" required>
+                        </div>
+                        <p class="text-muted small">Indica el monto de Dinero Base con el que inicias el día.</p>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">Confirmar Apertura</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movimiento Modal -->
+    <div class="modal fade" id="movimientoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <form th:action="@{/admin/caja/movimiento}" method="post">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Registrar Movimiento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Movimiento</label>
+                            <select name="tipo" class="form-select bg-light border-0 py-3" required>
+                                <option value="GASTO">Egreso / Gasto</option>
+                                <option value="INGRESO">Ingreso / Pago Externo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Descripción</label>
+                            <input type="text" name="descripcion" class="form-control bg-light border-0 py-3" placeholder="Ej: Pago de Luz, Compra de Almuerzo..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Monto</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0">S/</span>
+                                <input type="number" step="0.10" name="monto" class="form-control bg-light border-0 py-3" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">Registrar Movimiento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        function confirmCierre() {
+            Swal.fire({
+                title: '¿Cerrar caja?',
+                text: "Se calculará el saldo final y se archivará el historial del día.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, cerrar caja',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/admin/caja/cierre';
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            })
+        }
+    </script>
+</body>
+</html>

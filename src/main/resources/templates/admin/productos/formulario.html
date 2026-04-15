@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Configuración de Producto')}"></head>
+<body class="bg-light">
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar-admin :: sidebar}"></div>
+
+<main class="main-content">
+    <!-- Navbar Superior -->
+    <nav class="navbar-top shadow-sm px-4 py-2 bg-white d-flex align-items-center justify-content-between position-fixed top-0 end-0 border-bottom" 
+         style="left: var(--sidebar-width); z-index: 1000; transition: var(--transition);">
+        <div class="navbar-left d-flex align-items-center">
+            <a th:href="@{/admin/productos}" class="btn btn-light rounded-circle me-3 shadow-sm border">
+                <i class="fas fa-arrow-left text-primary"></i>
+            </a>
+            <h1 class="page-title h4 fw-bold mb-0" th:text="${producto.id == null ? 'Registrar Nuevo Producto' : 'Editar Medicamento'}">Formulario</h1>
+        </div>
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <span class="badge bg-primary-subtle text-primary border px-3 py-2 rounded-pill" th:if="${producto.id != null}" th:text="'ID: #' + ${producto.id}">#123</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-4 mt-5 pt-5">
+        <form th:action="@{/admin/productos/guardar}" th:object="${producto}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{imagenPath}">
+            <input type="hidden" th:field="*{empresaId}">
+            
+            <div class="row g-4 justify-content-center">
+                <!-- Column Content -->
+                <div class="col-xl-8 col-lg-7">
+                    <!-- General Information Card -->
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-info-circle text-primary me-2"></i>Información General</h5>
+                            <hr class="opacity-10 mt-3 mb-0">
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Nombre del Producto</label>
+                                    <input type="text" th:field="*{nombre}" class="form-control form-control-lg rounded-3 border bg-light" placeholder="Ej: Amoxicilina 500mg" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Categoría Permanente</label>
+                                    <select th:field="*{categoria}" class="form-select rounded-3 border bg-light" required>
+                                        <option value="" disabled>Seleccionar grupo terapéutico...</option>
+                                        <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Laboratorio</label>
+                                    <input type="text" th:field="*{laboratorio}" class="form-control rounded-3 border bg-light" placeholder="Ej: Bayer, Genfar...">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Descripción / Notas</label>
+                                    <textarea th:field="*{descripcion}" class="form-control rounded-3 border bg-light" rows="3" placeholder="Información adicional sobre el producto..."></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Principio Activo</label>
+                                    <input type="text" th:field="*{principioActivo}" class="form-control rounded-3 border bg-light" placeholder="Ej: Trihidrato de Amoxicilina">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Presentación</label>
+                                    <input type="text" th:field="*{presentacion}" class="form-control rounded-3 border bg-light" placeholder="Ej: Tabletas, Caja x 20">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warehouse & Pricing Card -->
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-warehouse text-success me-2"></i>Inventario & Costos</h5>
+                            <hr class="opacity-10 mt-3 mb-0">
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Precio Compra</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border border-end-0">S/</span>
+                                        <input type="number" step="0.01" th:field="*{precioCompra}" class="form-control rounded-3 border bg-light border-start-0" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Precio Venta</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border border-end-0">S/</span>
+                                        <input type="number" step="0.01" th:field="*{precioVenta}" class="form-control rounded-3 border bg-light border-start-0" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Stock Actual</label>
+                                    <input type="number" th:field="*{stock}" class="form-control rounded-3 border bg-light" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Alerta Mínima</label>
+                                    <input type="number" th:field="*{stockMinimo}" class="form-control rounded-3 border bg-light" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Fecha Vencimiento</label>
+                                    <input type="date" th:field="*{fechaVencimiento}" class="form-control rounded-3 border bg-light">
+                                </div>
+                                <div class="col-12 d-flex flex-wrap align-items-center gap-4">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" th:field="*{activo}" id="activoCheck">
+                                        <label class="form-check-label fw-bold small text-muted text-uppercase ms-2" for="activoCheck" title="Producto inactivo: no aparece en el marketplace ni en ventas sugeridas">Producto activo</label>
+                                    </div>
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" th:field="*{requiereReceta}" id="recetaCheck">
+                                        <label class="form-check-label fw-bold small text-muted text-uppercase ms-2" for="recetaCheck">Requiere Receta Médica</label>
+                                    </div>
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" th:field="*{visibleMarketplace}" id="visibleMarketplaceCheck">
+                                        <label class="form-check-label fw-bold small text-muted text-uppercase ms-2" for="visibleMarketplaceCheck" title="Si está desactivado, el producto no se muestra en el catálogo público del marketplace">Visible en Marketplace</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column Side -->
+                <div class="col-xl-4 col-lg-5">
+                    <!-- Image Card -->
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-image text-warning me-2"></i>Imagen Local</h5>
+                            <hr class="opacity-10 mt-3 mb-0">
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <div class="bg-light rounded-4 mb-3 d-flex align-items-center justify-content-center overflow-hidden border" style="height: 250px;">
+                                <img id="preview" th:src="*{imagenPath != null && !imagenPath.isEmpty() ? imagenPath : ''}" 
+                                     class="img-fluid w-100 h-100 object-fit-cover" 
+                                     th:style="*{imagenPath != null && !imagenPath.isEmpty() ? '' : 'display:none'}">
+                                <div id="placeholder" th:style="*{imagenPath != null && !imagenPath.isEmpty() ? 'display:none' : ''}">
+                                    <i class="fas fa-upload fa-4x opacity-10"></i>
+                                    <p class="text-muted small mt-2">Sube una imagen desde tu PC</p>
+                                </div>
+                            </div>
+                            <label class="btn btn-outline-primary rounded-pill px-4 w-100 fw-bold small mb-2">
+                                <i class="fas fa-file-image me-2"></i>Seleccionar Archivo
+                                <input type="file" name="imagenFile" accept="image/*" class="d-none" onchange="previewImage(this)">
+                            </label>
+                            <small class="text-muted small">JPG, PNG o WEBP admitidos.</small>
+                        </div>
+                    </div>
+
+                    <!-- Identity Card -->
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-barcode text-dark me-2"></i>Codificación</h5>
+                            <hr class="opacity-10 mt-3 mb-0">
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Código EAN13</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border border-end-0"><i class="fas fa-barcode"></i></span>
+                                    <input type="text" th:field="*{codigoEan13}" class="form-control rounded-3 border bg-light border-start-0 font-monospace" placeholder="Automático si vacío">
+                                </div>
+                            </div>
+                            <!-- Hidden QR info for future if needed -->
+                        </div>
+                    </div>
+
+                    <!-- Action Card -->
+                    <div class="card border-0 shadow-sm rounded-4 bg-primary text-white overflow-hidden position-relative">
+                        <div class="card-body p-4 text-center" style="z-index: 1;">
+                            <p class="small opacity-75 mb-4 px-3">Asegúrate de revisar todos los campos antes de guardar para mantener la integridad del inventario.</p>
+                            <button type="submit" class="btn btn-white w-100 rounded-pill py-2 fw-bold shadow-lg">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                            <a th:href="@{/admin/productos}" class="btn btn-link text-white text-decoration-none mt-3 small opacity-75">Cancelar y volver</a>
+                        </div>
+                        <i class="fas fa-clipboard-check position-absolute mt-5 me-5 end-0 opacity-10 fa-6x rotate-15" style="bottom: -20px; right: -20px;"></i>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script th:inline="javascript">
+    function previewImage(input) {
+        const preview = document.getElementById('preview');
+        const placeholder = document.getElementById('placeholder');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+<style>
+    .navbar-top { height: 75px; transition: var(--transition); z-index: 1040; }
+    .btn-white { background: #fff; color: var(--primary-color) !important; border: 0; }
+    .btn-white:hover { background: #f8fafc; transform: translateY(-2px); transition: 0.3s; }
+    .rotate-15 { transform: rotate(15deg); }
+    .font-monospace { font-family: 'JetBrains Mono', 'Courier New', monospace; letter-spacing: 1px; }
+</style>
+
+</body>
+</html>

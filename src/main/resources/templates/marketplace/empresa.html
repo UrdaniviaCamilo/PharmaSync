@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${empresa.nombreComercial} + ' | Marketplace')}"></head>
+<body class="bg-light">
+
+    <!-- Global Nav (Same as Marketplace) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3 transition-all" id="mainNav">
+        <div class="container border-bottom pb-2">
+            <a class="navbar-brand d-flex align-items-center" href="/marketplace">
+                <div class="brand-icon me-2 rounded-3 p-2 bg-primary text-white shadow-sm">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="fw-bold text-dark h5 mb-0 d-block">PharmaSync</span>
+                    <span class="text-primary fw-light x-small text-uppercase ls-2">Marketplace Nacional</span>
+                </div>
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                    <button type="submit" class="btn btn-outline-danger rounded-pill px-3 fw-bold small">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </button>
+                </form>
+                <div class="position-relative">
+                    <button class="btn btn-light rounded-circle shadow-sm border border-0 p-2 me-2" style="width: 45px; height: 45px;" data-bs-toggle="dropdown" aria-expanded="false" id="btnNotificaciones">
+                        <i class="fas fa-bell text-primary"></i>
+                        <span id="notificationCount" class="badge position-absolute top-0 start-100 translate-middle bg-danger border border-white rounded-circle small d-none">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-3" aria-labelledby="btnNotificaciones" style="width: 350px; max-height: 400px; overflow-y: auto;" id="notificationList">
+                        <li class="text-center opacity-50 py-3"><p class="mb-0 small"><i class="fas fa-bell-slash fa-2x mb-2 d-block"></i>No tienes notificaciones</p></li>
+                    </ul>
+                </div>
+                    <div sec:authorize="isAuthenticated()" class="d-flex align-items-center me-2">
+                        <div class="rounded-circle overflow-hidden border shadow-sm d-flex align-items-center justify-content-center bg-white" style="width: 42px; height: 42px;">
+                            <img th:if="${config != null && config.logoUrl != null && !config.logoUrl.isEmpty()}" 
+                                 th:src="${config.logoUrl}" 
+                                 class="w-100 h-100 object-fit-cover" alt="Business Logo">
+                            <i th:unless="${config != null && config.logoUrl != null && !config.logoUrl.isEmpty()}" 
+                               class="fas fa-prescription-bottle-alt text-primary"></i>
+                        </div>
+                    </div>
+                <div class="position-relative">
+                    <button class="btn btn-primary rounded-circle border-0 shadow-lg p-2" style="width: 45px; height: 45px;" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartCount" class="badge position-absolute top-0 start-100 translate-middle bg-danger border border-white rounded-circle small">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Return Button Row -->
+    <div class="container mt-4">
+        <a href="/marketplace" class="btn btn-light border shadow-sm rounded-pill fw-bold px-4 py-2">
+            <i class="fas fa-arrow-left me-2"></i> Volver al Marketplace
+        </a>
+    </div>
+
+    <!-- Company Header -->
+    <header class="py-5 bg-white mb-4 shadow-sm">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-auto text-center text-md-start mb-4 mb-md-0">
+                    <div class="dropdown-icon-circle rounded-circle shadow-sm overflow-hidden d-flex align-items-center justify-content-center bg-light" style="width: 100px; height: 100px;">
+                        <img th:if="${empresa.logoPath != null && !empresa.logoPath.isEmpty()}" th:src="${empresa.logoPath}" class="w-100 h-100 object-fit-cover" alt="Logo">
+                        <i th:unless="${empresa.logoPath != null && !empresa.logoPath.isEmpty()}" class="fas fa-store fa-3x text-primary opacity-50"></i>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="badge bg-success-subtle text-success rounded-pill px-3 py-1 mb-2 fw-bold">Negocio Verificado</div>
+                    <h1 class="display-5 fw-900 text-dark mb-1" th:text="${empresa.nombreComercial}">Nombre de la Empresa</h1>
+                    <p class="lead text-muted mb-3" th:text="${empresa.razonSocial}">Razón Social S.A.C.</p>
+                    <div class="d-flex flex-wrap gap-4 text-muted small">
+                        <span><i class="fas fa-map-marker-alt text-primary me-2"></i> <span th:text="${empresa.direccion + ', ' + empresa.distrito}">Dirección</span></span>
+                        <span><i class="fas fa-clock text-primary me-2"></i> Abierto ahora</span>
+                        <span><i class="fas fa-star text-warning me-2"></i> 4.8 (120 Reseñas)</span>
+                    </div>
+                </div>
+                <div class="col-md-auto mt-4 mt-lg-0 text-center text-lg-end">
+                    <button id="btnSeguirFarmacia" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-lg" th:attr="data-id=${empresa.id}">
+                        Seguir Farmacia <i class="fas fa-plus ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Product Catalog for this Company -->
+    <main class="container py-5">
+        <div class="row">
+            <!-- Sidebar Filters (Specific to Company) -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
+                    <h6 class="fw-bold mb-4 border-bottom pb-2">CATEGORÍAS</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-3">
+                        <li th:each="cat : ${categorias}">
+                            <a th:href="@{'/marketplace/empresa/' + ${empresa.id} + '?categoria=' + ${cat.id}}"
+                               class="text-decoration-none text-dark fw-medium hover-primary d-flex align-items-center justify-content-between"
+                               th:classappend="${categoriaId != null && categoriaId == cat.id} ? ' fw-bold text-primary' : ''">
+                                <span><i class="fas fa-tag me-2 text-primary opacity-50 small"></i> <span th:text="${cat.nombre}">Categoría</span></span>
+                                <i class="fas fa-chevron-right x-small opacity-25"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Productos Disponibles</h4>
+                    <span class="text-muted small" th:text="${productos.size() + ' resultados encontrado'}">0 resultados</span>
+                </div>
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                    <div class="col" th:each="prod : ${productos}">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden marketplace-card transition-all">
+                            <div class="position-relative overflow-hidden" style="height: 180px; background: #f8fafc;">
+                                <img th:src="${prod.imagenPath != null && !prod.imagenPath.isEmpty() ? prod.imagenPath : 'https://img.freepik.com/vector-premium/paquete-medicamentos-blanco-estilo-dibujos-animados-3d-aislado_340632-1534.jpg'}" 
+                                     class="card-img-top p-4 h-100 w-100" style="object-fit: contain;" alt="Producto">
+                                <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 rounded-pill fw-bold" th:if="${prod.requiereReceta}">
+                                    <i class="fas fa-file-prescription me-1"></i> Con Receta
+                                </span>
+                            </div>
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-1 text-dark text-truncate" th:text="${prod.nombre}">Nombre</h6>
+                                <div class="d-flex align-items-center mb-3">
+                                    <p class="x-small text-muted mb-0" th:text="${prod.laboratorio}">Laboratorio</p>
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle ms-auto x-small fw-bold px-2 py-1">
+                                        <i class="fas fa-box me-1"></i> Stock: <span th:text="${prod.stock}"></span>
+                                    </span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                                    <h5 class="fw-bold text-primary mb-0" th:text="'S/ ' + ${prod.precioVenta}">S/ 0.00</h5>
+                                    <button type="button" class="btn btn-primary rounded-circle shadow-sm btn-add-cart"
+                                            th:attr="data-id=${prod.id},data-nombre=${prod.nombre},data-precio=${prod.precioVenta},data-receta=${prod.requiereReceta},data-stock=${prod.stock}">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer-public :: footer}"></div>
+
+    <!-- Cart Offcanvas (Shared) -->
+    <div th:replace="~{marketplace/index :: #cartOffcanvas}"></div>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .fw-900 { font-family: 'Readex Pro', sans-serif; font-weight: 800; }
+        .ls-2 { letter-spacing: 2px; }
+        .x-small { font-size: 0.7rem; }
+        
+        .marketplace-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; }
+        .hover-primary:hover { color: var(--primary) !important; }
+        
+        .btn-add-cart:hover { transform: scale(1.1) rotate(90deg); transition: 0.3s; }
+    </style>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script th:inline="javascript">
+        const cart = JSON.parse(localStorage.getItem('pharmasync_cart') || '[]');
+
+        function addOrMergeCart(id, nombre, precio, receta, recetaNombre, recetaMime, recetaData, stock) {
+            const existing = cart.find(item => item.id === id);
+            const currentQty = existing ? existing.qty : 0;
+            const newQty = currentQty + 1;
+
+            if (newQty > stock) {
+                Swal.fire({
+                    title: 'Stock limitado',
+                    text: `La cantidad solicitada (${newQty}) supera el stock disponible (${stock}). Tu pedido podría demorar más de lo habitual.`,
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: 'Entendido, continuar',
+                    confirmButtonColor: '#4361ee'
+                });
+            }
+
+            if (existing) {
+                existing.qty++;
+                existing.stock = stock; // Store stock reference
+                if (receta && recetaData) {
+                    existing.receta = true;
+                    existing.recetaNombre = recetaNombre;
+                    existing.recetaMime = recetaMime;
+                    existing.recetaData = recetaData;
+                }
+            } else {
+                cart.push({ id, nombre, precio, qty: 1, receta, recetaNombre, recetaMime, recetaData, stock });
+            }
+            localStorage.setItem('pharmasync_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const total = cart.reduce((sum, item) => sum + (item.precio * item.qty), 0);
+            const badge = document.getElementById('cartCount');
+            if (badge) badge.textContent = count;
+            const totalText = document.getElementById('cartTotalText');
+            if (totalText) totalText.textContent = `S/ ${total.toFixed(2)}`;
+            const list = document.getElementById('cartItemsList');
+            if (!list) return;
+            if (cart.length === 0) {
+                list.innerHTML = '<div class="text-center py-5 opacity-50"><i class="fas fa-shopping-basket fa-4x mb-3"></i><p>Tu carrito está vacío</p></div>';
+                document.getElementById('btnCheckout').classList.add('disabled');
+            } else {
+                document.getElementById('btnCheckout').classList.remove('disabled');
+                list.innerHTML = cart.map((item, idx) => `
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-4">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 fw-bold small">${item.nombre} ${item.receta ? '<i class="fas fa-file-prescription text-warning ms-1"></i>' : ''}</h6>
+                            <div class="input-group input-group-sm mt-2" style="max-width: 120px;">
+                                <button type="button" class="btn btn-outline-secondary px-2 py-0" onclick="changeQty(${idx}, -1)">−</button>
+                                <input type="text" class="form-control text-center py-0" value="${item.qty}" readonly>
+                                <button type="button" class="btn btn-outline-secondary px-2 py-0" onclick="changeQty(${idx}, 1)">+</button>
+                            </div>
+                            <span class="x-small text-muted">S/ ${item.precio.toFixed(2)} c/u</span>
+                        </div>
+                        <div class="fw-bold text-primary">S/ ${(item.precio * item.qty).toFixed(2)}</div>
+                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removeFromCart(${idx})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.changeQty = function(idx, delta) {
+            if (!cart[idx]) return;
+            const item = cart[idx];
+            const n = item.qty + delta;
+            
+            if (delta > 0 && n > item.stock) {
+                 Swal.fire({
+                    title: 'Stock limitado',
+                    text: `La cantidad solicitada (${n}) supera el stock disponible (${item.stock}).`,
+                    icon: 'warning',
+                    confirmButtonText: 'Continuar',
+                    confirmButtonColor: '#4361ee'
+                });
+            }
+
+            if (n > 0) {
+                item.qty = n;
+                localStorage.setItem('pharmasync_cart', JSON.stringify(cart));
+                updateCartUI();
+            } else if (n === 0) removeFromCart(idx);
+        };
+
+        window.removeFromCart = function(idx) {
+            cart.splice(idx, 1);
+            localStorage.setItem('pharmasync_cart', JSON.stringify(cart));
+            updateCartUI();
+        };
+
+        function cargarNotificaciones() {
+            fetch('/api/notificaciones/all')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('notificationCount');
+                    const list = document.getElementById('notificationList');
+                    if (!badge || !list) return;
+                    if (data.error || !Array.isArray(data) || data.length === 0) {
+                        badge.classList.add('d-none');
+                        list.innerHTML = '<li class="text-center opacity-50 py-3"><p class="mb-0 small"><i class="fas fa-bell-slash fa-2x mb-2 d-block"></i>No tienes notificaciones</p></li>';
+                        return;
+                    }
+                    
+                    const unreadCount = data.filter(n => !n.leida).length;
+                    if (unreadCount > 0) {
+                        badge.classList.remove('d-none');
+                        badge.textContent = unreadCount;
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+
+                    list.innerHTML = data.slice(0, 10).map(notif => {
+                        const enc = encodeURIComponent(notif.url || '');
+                        const bgClass = notif.leida ? 'bg-light opacity-75' : 'bg-white';
+                        const dot = notif.leida ? '' : '<span class="position-absolute top-0 start-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>';
+                        return `<li><a class="dropdown-item p-3 border-bottom text-wrap notif-item position-relative ${bgClass}" href="#" data-id="${notif.id}" data-url="${enc}" style="font-size:0.85rem;">
+                            ${dot}
+                            <strong>Notificación</strong><br><span class="text-muted">${notif.mensaje}</span><br><small class="text-primary mt-1 d-block">Clic para abrir</small></a></li>`;
+                    }).join('');
+                    list.querySelectorAll('.notif-item').forEach(a => {
+                        a.addEventListener('click', function(ev) {
+                            ev.preventDefault();
+                            const id = this.dataset.id;
+                            const enc = this.getAttribute('data-url');
+                            fetch('/api/notificaciones/' + id + '/read', { method: 'POST' })
+                                .then(() => {
+                                    const target = enc ? decodeURIComponent(enc) : '';
+                                    if (target) window.location.href = target;
+                                    else cargarNotificaciones();
+                                });
+                        });
+                    });
+                })
+                .catch(() => {});
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartUI();
+            cargarNotificaciones();
+            setInterval(cargarNotificaciones, 30000);
+
+            document.querySelectorAll('.btn-add-cart').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const nombre = this.dataset.nombre;
+                    const precio = parseFloat(this.dataset.precio);
+                    const stock = parseInt(this.dataset.stock || '0');
+                    const receta = this.dataset.receta === 'true';
+                    
+                    if (receta) {
+                        Swal.fire({
+                            title: 'Receta médica',
+                            html: '<p class="small text-muted mb-2">Adjunta foto o PDF de la receta. Podrás completar la compra tras la validación del equipo de la farmacia.</p><input type="file" id="swalRecetaEmp" class="form-control" accept="image/*,application/pdf">',
+                            showCancelButton: true,
+                            confirmButtonText: 'Guardar y agregar',
+                            cancelButtonText: 'Cancelar'
+                        }).then(r => {
+                            if (!r.isConfirmed) return;
+                            const f = document.getElementById('swalRecetaEmp').files[0];
+                            if (!f) { Swal.fire('Atención', 'Debes adjuntar la receta.', 'warning'); return; }
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                addOrMergeCart(id, nombre, precio, true, f.name, f.type, reader.result, stock);
+                                Swal.fire({ title: '¡Añadido!', text: nombre, icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+                            };
+                            reader.readAsDataURL(f);
+                        });
+                        return;
+                    }
+                    addOrMergeCart(id, nombre, precio, false, null, null, null, stock);
+                    Swal.fire({ title: '¡Añadido!', text: nombre, icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+                });
+            });
+
+            const btnSeguir = document.getElementById('btnSeguirFarmacia');
+            if (btnSeguir) {
+                const empId = btnSeguir.getAttribute('data-id');
+                fetch('/api/empresas/' + empId + '/is-following', { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.following) {
+                            btnSeguir.innerHTML = 'Siguiendo <i class="fas fa-check ms-2"></i>';
+                            btnSeguir.classList.replace('btn-primary', 'btn-success');
+                        }
+                    });
+                btnSeguir.addEventListener('click', () => {
+                    fetch('/api/empresas/' + empId + '/seguir', { method: 'POST', credentials: 'same-origin' })
+                        .then(res => {
+                            if (res.status === 401) {
+                                Swal.fire('Atención', 'Debes iniciar sesión para seguir farmacias', 'info');
+                                return null;
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data && data.success) {
+                                if (data.following) {
+                                    btnSeguir.innerHTML = 'Siguiendo <i class="fas fa-check ms-2"></i>';
+                                    btnSeguir.classList.replace('btn-primary', 'btn-success');
+                                } else {
+                                    btnSeguir.innerHTML = 'Seguir Farmacia <i class="fas fa-plus ms-2"></i>';
+                                    btnSeguir.classList.replace('btn-success', 'btn-primary');
+                                }
+                            }
+                        });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
